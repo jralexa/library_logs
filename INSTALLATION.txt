@@ -1,0 +1,86 @@
+# QUICK INSTALLATION GUIDE
+# DepEd Southern Leyte Division Library Log System
+
+## STEP-BY-STEP INSTALLATION
+
+### 1. PREPARE XAMPP
+   - Make sure XAMPP is installed
+   - Start Apache and MySQL from XAMPP Control Panel
+
+### 2. CREATE DATABASE
+   a. Open browser: http://localhost/phpmyadmin
+   b. Click "Import" tab
+   c. Choose file: database.sql
+   d. Click "Go"
+   e. Database "liblogs_db" will be created with 2 tables:
+      - users (admin accounts)
+      - logbook_entries (visitor logs)
+
+### 3. COPY FILES TO XAMPP
+   a. Go to: C:\xampp\htdocs\ (or your XAMPP location)
+   b. Create folder: "library-system"
+   c. Copy ALL files to this folder:
+      - index.php
+      - database.sql
+      - README.md
+      - admin/ folder (with all files inside)
+      - config/ folder (with all files inside)
+
+### 4. ACCESS THE SYSTEM
+   Public Page: http://localhost/library-system
+   Admin Login: http://localhost/library-system/admin/login.php
+
+### 5. DEFAULT LOGIN
+   Username: admin
+   Password: admin123
+
+## FOLDER STRUCTURE (MUST BE EXACT)
+```
+C:\xampp\htdocs\library-system\
+├── index.php
+├── database.sql
+├── README.md
+├── admin\
+│   ├── login.php
+│   ├── dashboard.php
+│   ├── logout.php
+│   └── export.php
+└── config\
+    ├── database.php
+    └── session.php
+```
+
+## HOW IT WORKS
+
+VISITOR SIDE:
+- Visitor opens: http://localhost/library-system
+- Fills in: Name, Client Type, Position, District, Purpose
+- Clicks "SUBMIT LOG"
+- Date and time are automatically recorded
+- Single visit entry only (no time-out tracking)
+- Done! No need to log out
+
+ADMIN SIDE:
+- Admin opens: http://localhost/library-system/admin/login.php
+- Logs in with: admin / admin123
+- Views all visitor logs in dashboard
+- Can filter by date, name, or client type
+- Can export logs to CSV
+- Can delete entries if needed
+
+## COMMON ISSUES
+
+Problem: "Cannot connect to database"
+Solution: Make sure MySQL is running in XAMPP
+
+Problem: "Page not found"
+Solution: Check if files are in correct folder (htdocs\library-system)
+
+Problem: "Cannot login"
+Solution: Make sure you imported database.sql first
+
+Problem: "Table doesn't exist"
+Solution: Re-import database.sql in phpMyAdmin
+
+## NEED HELP?
+Read the full README.md file for detailed instructions.
