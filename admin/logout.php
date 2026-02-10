@@ -1,10 +1,11 @@
 <?php
+// Session helpers.
 require_once '../config/session.php';
 
-// Destroy all session data
+// Destroy all session data.
 session_destroy();
 
-// Redirect to login page
+// Redirect to login page.
 header('Location: login.php');
 exit();
 ?>

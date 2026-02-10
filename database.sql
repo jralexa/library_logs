@@ -1,3 +1,4 @@
+-- Database schema for the library log system.
 -- Database: liblogs_db
 CREATE DATABASE IF NOT EXISTS liblogs_db;
 USE liblogs_db;

@@ -4,50 +4,58 @@
 ## STEP-BY-STEP INSTALLATION
 
 ### 1. PREPARE XAMPP
-   - Make sure XAMPP is installed
-   - Start Apache and MySQL from XAMPP Control Panel
+- Make sure XAMPP is installed.
+- Start Apache and MySQL from XAMPP Control Panel.
 
 ### 2. CREATE DATABASE
-   a. Open browser: http://localhost/phpmyadmin
-   b. Click "Import" tab
-   c. Choose file: database.sql
-   d. Click "Go"
-   e. Database "liblogs_db" will be created with 2 tables:
-      - users (admin accounts)
-      - logbook_entries (visitor logs)
+1. Open browser: http://localhost/phpmyadmin
+2. Click the "Import" tab.
+3. Choose file: `database.sql`
+4. Click "Go".
+5. Database `liblogs_db` will be created with 2 tables:
+- `users` (admin accounts)
+- `logbook_entries` (visitor logs)
 
 ### 3. COPY FILES TO XAMPP
-   a. Go to: C:\xampp\htdocs\ (or your XAMPP location)
-   b. Create folder: "library-system"
-   c. Copy ALL files to this folder:
-      - index.php
-      - database.sql
-      - README.md
-      - admin/ folder (with all files inside)
-      - config/ folder (with all files inside)
+1. Go to: `C:\xampp\htdocs\` (or your XAMPP location)
+2. Create folder: `library-system`
+3. Copy all project files into this folder.
 
 ### 4. ACCESS THE SYSTEM
-   Public Page: http://localhost/library-system
-   Admin Login: http://localhost/library-system/admin/login.php
+- Public Page: http://localhost/library-system
+- Admin Login: http://localhost/library-system/admin/login.php
 
 ### 5. DEFAULT LOGIN
-   Username: admin
-   Password: admin123
+- Username: `admin`
+- Password: `admin123`
 
-## FOLDER STRUCTURE (MUST BE EXACT)
+## FOLDER STRUCTURE (IMPORTANT FILES)
 ```
 C:\xampp\htdocs\library-system\
-├── index.php
-├── database.sql
-├── README.md
-├── admin\
-│   ├── login.php
-│   ├── dashboard.php
-│   ├── logout.php
-│   └── export.php
-└── config\
-    ├── database.php
-    └── session.php
+|-- index.php
+|-- database.sql
+|-- README.md
+|-- INSTALLATION.txt
+|-- admin\
+|   |-- login.php
+|   |-- dashboard.php
+|   |-- logout.php
+|   `-- export.php
+|-- config\
+|   |-- database.php
+|   `-- session.php
+|-- css\
+|   |-- style.css
+|   `-- admin.css
+|-- includes\
+|   |-- bootstrap.php
+|   |-- helpers.php
+|   `-- partials\
+|       |-- document_start.php
+|       |-- document_end.php
+|       `-- flash.php
+`-- js\
+    `-- main.js
 ```
 
 ## HOW IT WORKS
@@ -58,7 +66,7 @@ VISITOR SIDE:
 - Clicks "SUBMIT LOG"
 - Date and time are automatically recorded
 - Single visit entry only (no time-out tracking)
-- Done! No need to log out
+- Done. No login needed.
 
 ADMIN SIDE:
 - Admin opens: http://localhost/library-system/admin/login.php

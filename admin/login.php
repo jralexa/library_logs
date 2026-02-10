@@ -1,8 +1,9 @@
 <?php
+// Database connection and session helpers.
 require_once '../config/database.php';
 require_once '../config/session.php';
 
-// Redirect if already logged in
+// Redirect if already logged in.
 if (isLoggedIn()) {
     header('Location: dashboard.php');
     exit();
@@ -10,10 +11,12 @@ if (isLoggedIn()) {
 
 $error = '';
 
+// Handle login submissions.
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $username = trim($_POST['username']);
     $password = $_POST['password'];
     
+    // Fetch the user by username.
     $stmt = $conn->prepare("SELECT id, username, password, role FROM users WHERE username = ?");
     $stmt->bind_param("s", $username);
     $stmt->execute();
@@ -22,6 +25,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($result->num_rows === 1) {
         $user = $result->fetch_assoc();
         
+        // Validate the password hash.
         if (password_verify($password, $user['password'])) {
             $_SESSION['user_id'] = $user['id'];
             $_SESSION['username'] = $user['username'];

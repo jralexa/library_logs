@@ -1,18 +1,18 @@
 <?php
-// Database configuration
+// Database connection settings.
 define('DB_HOST', 'localhost');
 define('DB_USER', 'root');
 define('DB_PASS', ''); // Default XAMPP password is empty
 define('DB_NAME', 'liblogs_db'); // Your existing database
 
-// Create connection
+// Create connection.
 $conn = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
 
-// Check connection
+// Check connection.
 if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
-// Set charset to utf8
+// Set charset to utf8.
 $conn->set_charset("utf8");
 ?>
