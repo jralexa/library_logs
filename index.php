@@ -14,42 +14,44 @@ function post_value($key) {
 
 // Handle form submission.
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Read form inputs.
     $name = post_value('name');
     $client_type = post_value('client_type');
     $position = post_value('position');
     $district = post_value('district');
     $purpose = post_value('purpose');
 
-    // Get current date and time (uses server timezone).
     $log_date = date('Y-m-d');
     $current_time = date('H:i:s');
 
-    // Validate required fields before insert.
     if ($name && $client_type && $position && $district && $purpose) {
-        // Insert new log entry.
+
         $stmt = $conn->prepare(
             "INSERT INTO logbook_entries (date, time_in, name, client_type, position, district, purpose)
              VALUES (?, ?, ?, ?, ?, ?, ?)"
         );
         $stmt->bind_param("sssssss", $log_date, $current_time, $name, $client_type, $position, $district, $purpose);
 
-        // Set success or error message after DB insert.
         if ($stmt->execute()) {
-            $safe_name = htmlspecialchars($name, ENT_QUOTES, 'UTF-8');
-            $message = "Visit logged successfully for {$safe_name} at " . date('h:i A');
-            $messageType = 'success';
+            $_SESSION['flash_message'] = "Visit logged successfully for " . htmlspecialchars($name);
+            $_SESSION['flash_type'] = "success";
         } else {
-            $message = "Error recording visit. Please try again.";
-            $messageType = 'error';
+            $_SESSION['flash_message'] = "Error recording visit. Please try again.";
+            $_SESSION['flash_type'] = "error";
         }
+
         $stmt->close();
+
+        // 🔴 REDIRECT prevents duplicate insert on refresh
+        header("Location: " . $_SERVER['PHP_SELF']);
+        exit;
     } else {
-        // Missing required fields.
-        $message = "Please complete all required fields.";
-        $messageType = 'error';
+        $_SESSION['flash_message'] = "Please complete all required fields.";
+        $_SESSION['flash_type'] = "error";
+        header("Location: " . $_SERVER['PHP_SELF']);
+        exit;
     }
 }
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -106,23 +108,38 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             border: 1px solid rgba(15, 23, 42, 0.06);
         }
         
-        /* Header/title block. */
+        /* Header/title block - Logo on left, text on right */
         .header {
-            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
             margin-bottom: 26px;
         }
+
+        .logo {
+            width: 80px;
+            height: 80px;
+            object-fit: contain;
+            flex-shrink: 0;
+        }
+
+        .header-text {
+            text-align: left;
+        }
         
-        .header h1 {
+        .header-text h1 {
             color: var(--ink);
             font-size: 28px;
-            margin-bottom: 8px;
+            margin-bottom: 6px;
             font-weight: 800;
             letter-spacing: -0.4px;
         }
         
-        .header p {
+        .header-text p {
             color: var(--muted);
             font-size: 14px;
+            margin: 0;
         }
         
         /* Date/time panel. */
@@ -271,16 +288,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             color: var(--error);
         }
 
-        /* Informational note box (not used currently). */
-        .info-note {
-            background: #eff6ff;
-            border-left: 4px solid var(--accent);
-            padding: 12px;
-            margin-bottom: 20px;
-            font-size: 13px;
-            color: #1e3a8a;
-        }
-
         /* Two-column layout on larger screens. */
         @media (min-width: 900px) {
             .form-grid {
@@ -302,32 +309,53 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 padding: 26px 20px 28px;
             }
 
-            .header h1 {
-                font-size: 24px;
+            .header {
+                gap: 15px;
+            }
+
+            .logo {
+                width: 60px;
+                height: 60px;
+            }
+
+            .header-text h1 {
+                font-size: 20px;
+            }
+
+            .header-text p {
+                font-size: 13px;
+            }
+
+            button {
+                width: 100%;
             }
         }
     </style>
 </head>
 <body>
     <div class="container">
+        <!-- Header with logo and text -->
         <div class="header">
-            <h1>📚 DepEd Southern Leyte Division Library</h1>
-            <p>Library Visitor Log System</p>
+            <img src="images/deped.jpg" alt="DepEd Logo" class="logo">
+            <div class="header-text">
+                <h1>DepEd Southern Leyte Division Library</h1>
+                <p>Library Visitor Log System</p>
+            </div>
         </div>
-        
+
         <!-- Live date/time display -->
         <div class="datetime-display">
             <div class="date" id="currentDate"></div>
-            <div class="time" id="currentTime"></div>
         </div>
 
         <!-- Status message after form submission -->
-        <?php if ($message): ?>
-            <div class="message <?php echo $messageType; ?>">
-                <?php echo $message; ?>
+        <?php if (!empty($_SESSION['flash_message'])): ?>
+            <div class="message <?php echo $_SESSION['flash_type']; ?>" id="flashMessage">
+                <?php echo $_SESSION['flash_message']; ?>
             </div>
+            <?php unset($_SESSION['flash_message'], $_SESSION['flash_type']); ?>
         <?php endif; ?>
-        
+
         <!-- Log entry form -->
         <form method="POST" action="" id="logForm" class="form-grid">
             <div class="form-group">
@@ -373,29 +401,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 day: 'numeric',
                 timeZone: 'Asia/Manila'
             };
+
             const dateStr = now.toLocaleDateString('en-PH', options);
-            
-            const timeStr = now.toLocaleTimeString('en-US', { 
-                hour: '2-digit', 
-                minute: '2-digit', 
-                second: '2-digit',
-                timeZone: 'Asia/Manila'
-            });
-            
             document.getElementById('currentDate').textContent = dateStr;
-            document.getElementById('currentTime').textContent = timeStr;
         }
         
-        // Update time every second.
+        // Auto-hide flash message after 3 seconds
+        const flash = document.getElementById('flashMessage');
+        if (flash) {
+            setTimeout(() => {
+                flash.style.transition = "opacity 0.5s ease";
+                flash.style.opacity = "0";
+                setTimeout(() => flash.remove(), 500);
+            }, 3000);
+        }
+
+        // Run only once (NO LIVE CLOCK)
         updateDateTime();
-        setInterval(updateDateTime, 1000);
-        
-        // Clear form after submission if successful.
-        <?php if ($messageType === 'success'): ?>
-        setTimeout(function() {
-            document.getElementById('logForm').reset();
-        }, 2000);
-        <?php endif; ?>
     </script>
 </body>
 </html>

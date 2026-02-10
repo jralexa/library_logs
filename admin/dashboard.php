@@ -48,6 +48,7 @@ $page = isset($_GET['page']) && is_numeric($_GET['page']) ? max(1, (int)$_GET['p
 $page_size = 50;
 $offset = ($page - 1) * $page_size;
 
+// Count total records
 $count_query = "SELECT COUNT(*) AS total FROM logbook_entries" . $where;
 $count_stmt = $conn->prepare($count_query);
 if (!empty($params)) {
@@ -62,8 +63,8 @@ $total_pages = max(1, (int)ceil($total_rows / $page_size));
 $page = min($page, $total_pages);
 $offset = ($page - 1) * $page_size;
 
-$query = "SELECT id, date, time_in, name, client_type, position, district, purpose
-          FROM logbook_entries" . $where . " ORDER BY date DESC, time_in DESC LIMIT ? OFFSET ?";
+// Get records for current page
+$query = "SELECT * FROM logbook_entries" . $where . " ORDER BY date DESC, time_in DESC LIMIT ? OFFSET ?";
 
 $params_with_page = $params;
 $types_with_page = $types . "ii";
@@ -76,480 +77,377 @@ if (!empty($params_with_page)) {
 }
 $stmt->execute();
 $result = $stmt->get_result();
-
 ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard - DepEd Library</title>
+    <title>Admin Dashboard</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
             background: #f5f5f5;
+            font-size: 14px;
         }
         
         .navbar {
-            background: #667eea;
+            position: fixed;        /* 🔴 makes it fixed */
+            top: 0;                 /* stick to top */
+            left: 0;
+            width: 100%;
+            z-index: 1000;          /* stay above content */
+
+            background: #2563eb;
             color: white;
-            padding: 15px 30px;
+            padding: 12px 20px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+
+            box-shadow: 0 2px 6px rgba(0,0,0,0.15); /* optional shadow */
         }
-        
-        .navbar h1 {
-            font-size: 20px;
-        }
-        
-        .navbar-right {
-            display: flex;
-            gap: 15px;
-            align-items: center;
-        }
-        
-        .navbar-right span {
-            font-size: 14px;
-        }
+
+        .navbar h1 { font-size: 16px; font-weight: 600; }
+        .navbar-right { display: flex; gap: 12px; align-items: center; font-size: 13px; }
         
         .btn-logout {
             background: rgba(255,255,255,0.2);
             color: white;
-            padding: 8px 20px;
+            padding: 6px 14px;
             border: none;
-            border-radius: 5px;
+            border-radius: 4px;
             cursor: pointer;
             text-decoration: none;
-            font-size: 14px;
-            transition: background 0.3s;
+            font-size: 13px;
         }
         
-        .btn-logout:hover {
-            background: rgba(255,255,255,0.3);
-        }
+        .btn-logout:hover { background: rgba(255,255,255,0.3); }
         
         .container {
             max-width: 1600px;
-            margin: 30px auto;
-            padding: 0 24px;
+            margin: 16px auto;
+            padding: 0 16px;
+        }
+        
+        .alert {
+            background: #d1fae5;
+            color: #065f46;
+            padding: 10px 16px;
+            border-radius: 6px;
+            margin-bottom: 16px;
+            font-size: 13px;
         }
         
         .card {
             background: white;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            overflow: hidden;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
         }
         
         .card-header {
-            padding: 20px 30px;
-            background: #f8f9fa;
-            border-bottom: 1px solid #e0e0e0;
+            padding: 16px;
+            border-bottom: 1px solid #e5e7eb;
         }
         
-        .card-header h2 {
-            color: #333;
-            font-size: 20px;
-        }
+        .card-header h2 { font-size: 16px; font-weight: 600; margin-bottom: 12px; }
         
         .filters {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 15px;
-            margin-top: 15px;
-            align-items: end;
-        }
-        
-        .filter-group {
-            display: flex;
-            flex-direction: column;
-            gap: 5px;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 8px;
+            margin-bottom: 12px;
         }
         
         .filter-group label {
+            display: block;
             font-size: 12px;
-            color: #666;
-            font-weight: 600;
+            color: #6b7280;
+            margin-bottom: 4px;
+            font-weight: 500;
         }
         
         .filter-group input,
         .filter-group select {
-            padding: 8px 12px;
-            border: 2px solid #e0e0e0;
-            border-radius: 5px;
-            font-size: 14px;
+            width: 100%;
+            padding: 6px 10px;
+            border: 1px solid #d1d5db;
+            border-radius: 4px;
+            font-size: 13px;
         }
         
-        .btn-filter {
-            background: #667eea;
-            color: white;
-            padding: 8px 20px;
+        .filter-group input:focus,
+        .filter-group select:focus {
+            outline: none;
+            border-color: #2563eb;
+        }
+        
+        .filter-actions {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        
+        .btn {
+            padding: 6px 14px;
             border: none;
-            border-radius: 5px;
+            border-radius: 4px;
             cursor: pointer;
-            font-size: 14px;
-            align-self: flex-end;
-            transition: background 0.3s;
-        }
-        
-        .btn-filter:hover {
-            background: #5568d3;
-        }
-        
-        .btn-clear {
-            background: #6c757d;
-            color: white;
-            padding: 8px 20px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 14px;
+            font-size: 13px;
             text-decoration: none;
             display: inline-block;
-            transition: background 0.3s;
         }
         
-        .btn-clear:hover {
-            background: #5a6268;
-        }
+        .btn-primary { background: #2563eb; color: white; }
+        .btn-primary:hover { background: #1d4ed8; }
+        .btn-secondary { background: #6b7280; color: white; }
+        .btn-secondary:hover { background: #4b5563; }
+        .btn-success { background: #059669; color: white; }
+        .btn-success:hover { background: #047857; }
+        .btn-danger { background: #dc2626; color: white; font-size: 12px; padding: 4px 10px; }
+        .btn-danger:hover { background: #b91c1c; }
         
-        .card-body {
-            padding: 0;
-        }
-        
-        .table-wrapper {
-            overflow-x: auto;
-        }
+        .table-wrapper { overflow-x: auto; }
         
         table {
             width: 100%;
             border-collapse: collapse;
-            min-width: 1100px;
+            min-width: 1000px;
         }
         
-        thead {
-            background: #f8f9fa;
-            position: sticky;
-            top: 0;
-            z-index: 1;
-        }
+        thead { background: #f9fafb; }
         
         th {
-            padding: 15px;
+            padding: 10px 12px;
             text-align: left;
             font-weight: 600;
-            color: #333;
+            color: #374151;
             font-size: 12px;
-            letter-spacing: 0.4px;
-            text-transform: uppercase;
-            border-bottom: 2px solid #e0e0e0;
+            border-bottom: 1px solid #e5e7eb;
             white-space: nowrap;
         }
         
         td {
-            padding: 14px 15px;
-            border-bottom: 1px solid #f0f0f0;
-            font-size: 14px;
-            vertical-align: top;
+            padding: 10px 12px;
+            border-bottom: 1px solid #f3f4f6;
+            font-size: 13px;
         }
         
-        tbody tr:hover {
-            background: #f8f9fa;
-        }
+        tbody tr:hover { background: #f9fafb; }
         
         .badge {
             display: inline-block;
-            padding: 4px 10px;
-            border-radius: 20px;
-            font-size: 12px;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 11px;
             font-weight: 600;
         }
         
-        .badge-field { background: #dcfce7; color: #166534; }
-        .badge-osds { background: #dbeafe; color: #1e40af; }
-        .badge-sgod { background: #fef3c7; color: #92400e; }
-        .badge-cid { background: #e9d5ff; color: #6b21a8; }
-        .badge-visitor { background: #fed7aa; color: #9a3412; }
+        .badge-student { background: #dbeafe; color: #1e40af; }
+        .badge-teacher { background: #dcfce7; color: #166534; }
+        .badge-staff { background: #fef3c7; color: #92400e; }
+        .badge-field { background: #fed7aa; color: #9a3412; }
+        .badge-visitor { background: #e9d5ff; color: #6b21a8; }
         .badge-other { background: #e5e7eb; color: #374151; }
         
-        .btn-delete {
-            background: #ef4444;
-            color: white;
-            padding: 5px 12px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 12px;
-            text-decoration: none;
-            transition: background 0.3s;
-        }
-        
-        .btn-delete:hover {
-            background: #dc2626;
-        }
-        
         .empty-state {
-            padding: 60px 20px;
+            padding: 48px 20px;
             text-align: center;
-            color: #999;
-        }
-        
-        .empty-state i {
-            font-size: 48px;
-            margin-bottom: 15px;
-        }
-        
-        .success-message {
-            background: #d1fae5;
-            color: #065f46;
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            border: 2px solid #10b981;
-        }
-        
-        .export-buttons {
-            display: flex;
-            gap: 10px;
-            margin-top: 15px;
-            flex-wrap: wrap;
-        }
-        
-        .btn-export {
-            background: #10b981;
-            color: white;
-            padding: 8px 20px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
+            color: #9ca3af;
             font-size: 14px;
-            text-decoration: none;
-            transition: background 0.3s;
         }
         
-        .btn-export:hover {
-            background: #059669;
-        }
-
-        @media (min-width: 1200px) {
-            .filters {
-                grid-template-columns: 220px 1fr 220px 170px 140px;
-            }
-        }
-
-        @media (max-width: 900px) {
-            .navbar {
-                flex-direction: column;
-                gap: 10px;
-                align-items: flex-start;
-            }
-
-            .navbar-right {
-                width: 100%;
-                justify-content: space-between;
-            }
-        }
-
-        @media (max-width: 768px) {
-            .container {
-                max-width: 100%;
-                margin: 0;
-                padding: 16px;
-            }
-
-            .filters {
-                grid-template-columns: 1fr;
-            }
-
-            .export-buttons {
-                width: 100%;
-            }
-
-            .card {
-                border-radius: 0;
-            }
-        }
-
         .pagination {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 15px 20px;
-            background: #f8f9fa;
-            border-top: 1px solid #e0e0e0;
-        }
-
-        .pagination-info {
+            padding: 12px 16px;
+            background: #f9fafb;
+            border-top: 1px solid #e5e7eb;
             font-size: 13px;
-            color: #666;
         }
-
+        
+        .pagination-info { color: #6b7280; }
+        
         .pagination-links {
             display: flex;
-            gap: 8px;
+            gap: 4px;
         }
-
+        
         .pagination-links a,
         .pagination-links span {
-            padding: 6px 10px;
-            border-radius: 5px;
-            font-size: 13px;
+            padding: 4px 10px;
+            border-radius: 4px;
             text-decoration: none;
+            font-size: 13px;
         }
-
+        
         .pagination-links a {
             background: white;
-            border: 1px solid #e0e0e0;
-            color: #333;
+            border: 1px solid #d1d5db;
+            color: #374151;
         }
-
+        
         .pagination-links a:hover {
-            border-color: #667eea;
-            color: #667eea;
+            border-color: #2563eb;
+            color: #2563eb;
         }
-
+        
         .pagination-links .current {
-            background: #667eea;
+            background: #2563eb;
             color: white;
-            border: 1px solid #667eea;
+            border: 1px solid #2563eb;
+        }
+        
+        @media (max-width: 768px) {
+            .container { margin: 0; padding: 0; }
+            .card { border-radius: 0; }
+            .navbar { flex-direction: column; gap: 8px; }
+            .navbar-right { width: 100%; justify-content: space-between; }
+            .filters { grid-template-columns: 1fr; }
         }
     </style>
 </head>
 <body>
     <div class="navbar">
-        <h1>📚 DepEd Southern Leyte Division Library - Admin Dashboard</h1>
+        <h1>Library  - DepEd Southern Leyte</h1>
         <div class="navbar-right">
-            <span>Welcome, <?php echo htmlspecialchars($_SESSION['username']); ?></span>
+            <span><?php echo htmlspecialchars($_SESSION['username']); ?></span>
             <a href="logout.php" class="btn-logout">Logout</a>
         </div>
     </div>
     
     <div class="container">
         <?php if (isset($_GET['deleted'])): ?>
-            <div class="success-message">
-                Log entry deleted successfully.
-            </div>
+            <div class="alert">✓ Log entry deleted successfully</div>
         <?php endif; ?>
         
         <div class="card">
-            <div class="card-header">
-                <h2>Library Logbook Entries</h2>
+            <div class="card-header sticky-filters">
+                <h2>Library Logbook (<?php echo number_format($total_rows); ?> entries)</h2>
                 
                 <form method="GET" action="">
                     <div class="filters">
                         <div class="filter-group">
                             <label>Date</label>
-                            <input type="date" name="filter_date" value="<?php echo $filter_date; ?>">
+                            <input type="date" name="filter_date" value="<?php echo htmlspecialchars($filter_date); ?>">
                         </div>
                         
                         <div class="filter-group">
                             <label>Name</label>
-                            <input type="text" name="filter_name" value="<?php echo htmlspecialchars($filter_name); ?>" placeholder="Search by name...">
+                            <input type="text" name="filter_name" value="<?php echo htmlspecialchars($filter_name); ?>" placeholder="Search name...">
                         </div>
                         
                         <div class="filter-group">
                             <label>Client Type</label>
-                            <input type="text" name="filter_client_type" value="<?php echo htmlspecialchars($filter_client_type); ?>" placeholder="Search by client type...">
-                        </div>
-                        
-                        <div class="filter-group">
-                            <label>&nbsp;</label>
-                            <button type="submit" class="btn-filter">Apply Filters</button>
-                        </div>
-                        
-                        <div class="filter-group">
-                            <label>&nbsp;</label>
-                            <a href="dashboard.php" class="btn-clear">Clear Filters</a>
+                            <input type="text" name="filter_client_type" value="<?php echo htmlspecialchars($filter_client_type); ?>" placeholder="Search type...">
                         </div>
                     </div>
+                    
+                    <div class="filter-actions">
+                        <button type="submit" class="btn btn-primary">Apply Filters</button>
+                        <a href="dashboard.php" class="btn btn-secondary">Clear</a>
+                        <a href="export.php?<?php echo http_build_query($_GET); ?>" class="btn btn-success">📥 Export CSV</a>
+                    </div>
                 </form>
-                
-                <div class="export-buttons">
-                    <a href="export.php?<?php echo http_build_query($_GET); ?>" class="btn-export">📥 Export to CSV</a>
-                </div>
             </div>
             
-            <div class="card-body">
-                <div class="table-wrapper">
-                    <?php if ($result->num_rows > 0): ?>
-                        <table>
-                            <thead>
+            <div class="table-wrapper">
+                <?php if ($result->num_rows > 0): ?>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Date</th>
+                                <th>Time</th>
+                                <th>Name</th>
+                                <th>Type</th>
+                                <th>Position</th>
+                                <th>District</th>
+                                <th>Purpose</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php while ($row = $result->fetch_assoc()): ?>
                                 <tr>
-                                    <th>ID</th>
-                                    <th>Date</th>
-                                    <th>Time In</th>
-                                    <th>Name</th>
-                                    <th>Client Type</th>
-                                    <th>Position</th>
-                                    <th>District</th>
-                                    <th>Purpose</th>
+                                    <td><?php echo $row['id']; ?></td>
+                                    <td><?php echo date('M d, Y', strtotime($row['date'])); ?></td>
+                                    <td><?php echo date('h:i A', strtotime($row['time_in'])); ?></td>
+                                    <td><?php echo htmlspecialchars($row['name']); ?></td>
+                                    <td>
+                                        <span class="badge badge-<?php echo strtolower($row['client_type']); ?>">
+                                            <?php echo htmlspecialchars($row['client_type']); ?>
+                                        </span>
+                                    </td>
+                                    <td><?php echo htmlspecialchars($row['position'] ?: '-'); ?></td>
+                                    <td><?php echo htmlspecialchars($row['district']); ?></td>
+                                    <td><?php echo htmlspecialchars($row['purpose']); ?></td>
+                                    <td>
+                                        <a href="?delete=<?php echo $row['id']; ?>&<?php echo http_build_query(array_diff_key($_GET, ['delete' => ''])); ?>" 
+                                           class="btn btn-danger" 
+                                           onclick="return confirm('Delete this entry?')">
+                                            Delete
+                                        </a>
+                                    </td>
                                 </tr>
-                            </thead>
-                            <tbody>
-                                <?php while ($row = $result->fetch_assoc()): ?>
-                                    <tr>
-                                        <td><?php echo $row['id']; ?></td>
-                                        <td><?php echo date('M d, Y', strtotime($row['date'])); ?></td>
-                                        <td><?php echo date('h:i A', strtotime($row['time_in'])); ?></td>
-                                        <td><?php echo htmlspecialchars($row['name']); ?></td>
-                                        <td>
-                                            <span class="badge badge-<?php echo strtolower($row['client_type']); ?>">
-                                                <?php echo $row['client_type']; ?>
-                                            </span>
-                                        </td>
-                                        <td><?php echo htmlspecialchars($row['position'] ?: '-'); ?></td>
-                                        <td><?php echo htmlspecialchars($row['district']); ?></td>
-                                        <td><?php echo htmlspecialchars($row['purpose']); ?></td>
-                                    </tr>
-                                <?php endwhile; ?>
-                            </tbody>
-                        </table>
-                    <?php else: ?>
-                        <div class="empty-state">
-                            <div>📋</div>
-                            <p>No library logs found.</p>
-                        </div>
-                    <?php endif; ?>
-                </div>
+                            <?php endwhile; ?>
+                        </tbody>
+                    </table>
+                <?php else: ?>
+                    <div class="empty-state">
+                        <div style="font-size: 32px; margin-bottom: 8px;">📋</div>
+                        <p>No entries found</p>
+                    </div>
+                <?php endif; ?>
             </div>
+            
             <?php if ($total_rows > 0): ?>
                 <div class="pagination">
                     <div class="pagination-info">
-                        Showing <?php echo number_format($offset + 1); ?>–
-                        <?php echo number_format(min($offset + $page_size, $total_rows)); ?>
-                        of <?php echo number_format($total_rows); ?> entries
+                        Showing <?php echo number_format($offset + 1); ?>–<?php echo number_format(min($offset + $page_size, $total_rows)); ?> of <?php echo number_format($total_rows); ?>
                     </div>
                     <div class="pagination-links">
                         <?php
                             $query_params = $_GET;
+                            
+                            // Previous button
                             if ($page > 1) {
                                 $query_params['page'] = $page - 1;
-                                echo '<a href="?' . htmlspecialchars(http_build_query($query_params)) . '">Previous</a>';
+                                echo '<a href="?' . http_build_query($query_params) . '">← Prev</a>';
                             }
 
+                            // Page numbers
                             $start_page = max(1, $page - 2);
                             $end_page = min($total_pages, $page + 2);
+
+                            if ($start_page > 1) {
+                                $query_params['page'] = 1;
+                                echo '<a href="?' . http_build_query($query_params) . '">1</a>';
+                                if ($start_page > 2) echo '<span>...</span>';
+                            }
 
                             for ($p = $start_page; $p <= $end_page; $p++) {
                                 $query_params['page'] = $p;
                                 if ($p === $page) {
                                     echo '<span class="current">' . $p . '</span>';
                                 } else {
-                                    echo '<a href="?' . htmlspecialchars(http_build_query($query_params)) . '">' . $p . '</a>';
+                                    echo '<a href="?' . http_build_query($query_params) . '">' . $p . '</a>';
                                 }
                             }
 
+                            if ($end_page < $total_pages) {
+                                if ($end_page < $total_pages - 1) echo '<span>...</span>';
+                                $query_params['page'] = $total_pages;
+                                echo '<a href="?' . http_build_query($query_params) . '">' . $total_pages . '</a>';
+                            }
+
+                            // Next button
                             if ($page < $total_pages) {
                                 $query_params['page'] = $page + 1;
-                                echo '<a href="?' . htmlspecialchars(http_build_query($query_params)) . '">Next</a>';
+                                echo '<a href="?' . http_build_query($query_params) . '">Next →</a>';
                             }
                         ?>
                     </div>
