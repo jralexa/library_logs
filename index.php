@@ -50,6 +50,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DepEd Southern Leyte Division Library</title>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap');
+
+        :root {
+            --bg: #f6f4ef;
+            --ink: #1f2937;
+            --muted: #6b7280;
+            --accent: #2563eb;
+            --accent-strong: #1d4ed8;
+            --card: #ffffff;
+            --line: #e5e7eb;
+            --soft: #f1f5f9;
+            --success: #16a34a;
+            --error: #dc2626;
+            --shadow: 0 20px 60px rgba(15, 23, 42, 0.12);
+        }
+
         * {
             margin: 0;
             padding: 0;
@@ -57,56 +73,65 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
         
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: 'Manrope', system-ui, -apple-system, Segoe UI, sans-serif;
+            background:
+                radial-gradient(1200px 600px at 15% 10%, #e2e8f0 0%, transparent 60%),
+                radial-gradient(900px 600px at 90% 0%, #dbeafe 0%, transparent 55%),
+                var(--bg);
             min-height: 100vh;
-            padding: 20px;
+            padding: 32px 18px 48px;
+            color: var(--ink);
         }
         
         .container {
-            max-width: 980px;
+            max-width: 920px;
             margin: 0 auto;
-            background: white;
-            padding: 40px;
-            border-radius: 15px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            background: var(--card);
+            padding: 36px 36px 40px;
+            border-radius: 18px;
+            box-shadow: var(--shadow);
+            border: 1px solid rgba(15, 23, 42, 0.06);
         }
         
         .header {
             text-align: center;
-            margin-bottom: 30px;
+            margin-bottom: 26px;
         }
         
         .header h1 {
-            color: #333;
+            color: var(--ink);
             font-size: 28px;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
+            font-weight: 800;
+            letter-spacing: -0.4px;
         }
         
         .header p {
-            color: #666;
+            color: var(--muted);
             font-size: 14px;
         }
         
         .datetime-display {
-            background: #f8f9fa;
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 25px;
+            background: var(--soft);
+            padding: 16px 18px;
+            border-radius: 12px;
+            margin-bottom: 22px;
             text-align: center;
+            border: 1px solid var(--line);
         }
         
         .datetime-display .date {
             font-size: 16px;
-            color: #333;
+            color: var(--ink);
             font-weight: 600;
         }
         
         .datetime-display .time {
             font-size: 24px;
-            color: #667eea;
-            font-weight: 700;
+            color: var(--accent);
+            font-weight: 800;
             margin-top: 5px;
+            letter-spacing: 0.3px;
         }
         
         .form-grid {
@@ -122,7 +147,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         label {
             display: block;
             margin-bottom: 8px;
-            color: #333;
+            color: var(--ink);
             font-weight: 600;
             font-size: 14px;
         }
@@ -131,64 +156,67 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         select,
         textarea {
             width: 100%;
-            padding: 12px;
-            border: 2px solid #e0e0e0;
-            border-radius: 8px;
+            padding: 12px 14px;
+            border: 1px solid var(--line);
+            border-radius: 10px;
             font-size: 14px;
-            transition: border-color 0.3s;
+            transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+            background: #ffffff;
+            color: var(--ink);
         }
         
         input[type="text"]:focus,
         select:focus,
         textarea:focus {
             outline: none;
-            border-color: #667eea;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.12);
         }
         
         textarea {
             resize: vertical;
-            min-height: 80px;
+            min-height: 90px;
         }
         
         button {
             width: 100%;
-            padding: 15px;
+            padding: 14px 18px;
             border: none;
-            border-radius: 8px;
-            font-size: 16px;
-            font-weight: 600;
+            border-radius: 12px;
+            font-size: 15px;
+            font-weight: 700;
             cursor: pointer;
-            transition: all 0.3s;
+            transition: transform 0.2s, box-shadow 0.2s, background 0.2s;
         }
         
         .btn-time-in {
-            background: #10b981;
+            background: var(--accent);
             color: white;
         }
         
         .btn-time-in:hover {
-            background: #059669;
+            background: var(--accent-strong);
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(16, 185, 129, 0.3);
+            box-shadow: 0 10px 25px rgba(37, 99, 235, 0.3);
         }
         
         .message {
             padding: 15px;
-            border-radius: 8px;
+            border-radius: 12px;
             margin-bottom: 20px;
             font-weight: 500;
         }
         
         .message.success {
-            background: #d1fae5;
-            color: #065f46;
-            border: 2px solid #10b981;
+            background: #dcfce7;
+            color: #166534;
+            border: 1px solid rgba(22, 163, 74, 0.2);
         }
         
         .message.error {
             background: #fee2e2;
             color: #991b1b;
-            border: 2px solid #ef4444;
+            border: 1px solid rgba(220, 38, 38, 0.25);
         }
         
         .admin-link {
@@ -197,9 +225,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
         
         .admin-link a {
-            color: #667eea;
+            color: var(--accent);
             text-decoration: none;
             font-size: 14px;
+            font-weight: 600;
         }
         
         .admin-link a:hover {
@@ -207,16 +236,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
         
         .required {
-            color: #ef4444;
+            color: var(--error);
         }
 
         .info-note {
-            background: #e0e7ff;
-            border-left: 4px solid #667eea;
+            background: #eff6ff;
+            border-left: 4px solid var(--accent);
             padding: 12px;
             margin-bottom: 20px;
             font-size: 13px;
-            color: #3730a3;
+            color: #1e3a8a;
         }
 
         @media (min-width: 900px) {
@@ -226,6 +255,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             .form-group.full {
                 grid-column: 1 / -1;
+            }
+        }
+
+        @media (max-width: 640px) {
+            body {
+                padding: 20px 14px 30px;
+            }
+
+            .container {
+                padding: 26px 20px 28px;
+            }
+
+            .header h1 {
+                font-size: 24px;
             }
         }
     </style>
@@ -275,13 +318,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </div>
             
             <button type="submit" class="btn-time-in form-group full">
-                ✅ SUBMIT LOG
+                SUBMIT LOG
             </button>
         </form>
-        
-        <div class="admin-link">
-            <a href="admin/login.php">🔐 Admin Login</a>
-        </div>
     </div>
     
     <script>
