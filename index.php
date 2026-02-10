@@ -1,33 +1,40 @@
 <?php
+// Load database connection and session helpers.
 require_once 'config/database.php';
 require_once 'config/session.php';
 
+// Message state for form feedback.
 $message = '';
 $messageType = '';
 
+// Helper to read sanitized POST values.
 function post_value($key) {
     return isset($_POST[$key]) ? trim($_POST[$key]) : '';
 }
 
-// Handle form submission
+// Handle form submission.
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // Read form inputs.
     $name = post_value('name');
     $client_type = post_value('client_type');
     $position = post_value('position');
     $district = post_value('district');
     $purpose = post_value('purpose');
 
-    // Get current date and time
+    // Get current date and time (uses server timezone).
     $log_date = date('Y-m-d');
     $current_time = date('H:i:s');
 
+    // Validate required fields before insert.
     if ($name && $client_type && $position && $district && $purpose) {
+        // Insert new log entry.
         $stmt = $conn->prepare(
             "INSERT INTO logbook_entries (date, time_in, name, client_type, position, district, purpose)
              VALUES (?, ?, ?, ?, ?, ?, ?)"
         );
         $stmt->bind_param("sssssss", $log_date, $current_time, $name, $client_type, $position, $district, $purpose);
 
+        // Set success or error message after DB insert.
         if ($stmt->execute()) {
             $safe_name = htmlspecialchars($name, ENT_QUOTES, 'UTF-8');
             $message = "Visit logged successfully for {$safe_name} at " . date('h:i A');
@@ -38,6 +45,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
         $stmt->close();
     } else {
+        // Missing required fields.
         $message = "Please complete all required fields.";
         $messageType = 'error';
     }
@@ -50,8 +58,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DepEd Southern Leyte Division Library</title>
     <style>
+        /* Import a clean, modern font. */
         @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap');
 
+        /* Design tokens for consistent theming. */
         :root {
             --bg: #f6f4ef;
             --ink: #1f2937;
@@ -66,12 +76,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             --shadow: 0 20px 60px rgba(15, 23, 42, 0.12);
         }
 
+        /* Global reset. */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
         
+        /* Page background and typography defaults. */
         body {
             font-family: 'Manrope', system-ui, -apple-system, Segoe UI, sans-serif;
             background:
@@ -83,8 +95,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             color: var(--ink);
         }
         
+        /* Main card container. */
         .container {
-            max-width: 920px;
+            max-width: 1080px;
             margin: 0 auto;
             background: var(--card);
             padding: 36px 36px 40px;
@@ -93,6 +106,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             border: 1px solid rgba(15, 23, 42, 0.06);
         }
         
+        /* Header/title block. */
         .header {
             text-align: center;
             margin-bottom: 26px;
@@ -111,6 +125,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             font-size: 14px;
         }
         
+        /* Date/time panel. */
         .datetime-display {
             background: var(--soft);
             padding: 16px 18px;
@@ -134,16 +149,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             letter-spacing: 0.3px;
         }
         
+        /* Form layout. */
         .form-grid {
             display: grid;
             grid-template-columns: 1fr;
             gap: 20px;
         }
 
+        /* Remove extra spacing from form groups. */
         .form-group {
             margin-bottom: 0;
         }
         
+        /* Field labels. */
         label {
             display: block;
             margin-bottom: 8px;
@@ -152,6 +170,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             font-size: 14px;
         }
         
+        /* Form input styling. */
         input[type="text"],
         select,
         textarea {
@@ -165,6 +184,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             color: var(--ink);
         }
         
+        /* Focus ring for accessibility. */
         input[type="text"]:focus,
         select:focus,
         textarea:focus {
@@ -173,13 +193,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.12);
         }
         
+        /* Textarea sizing. */
         textarea {
             resize: vertical;
             min-height: 90px;
         }
         
+        /* Base button styling. */
         button {
-            width: 100%;
+            width: 50%;
+            display: block; 
+            margin: 0 auto;
             padding: 14px 18px;
             border: none;
             border-radius: 12px;
@@ -189,17 +213,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             transition: transform 0.2s, box-shadow 0.2s, background 0.2s;
         }
         
+        /* Primary submit button. */
         .btn-time-in {
             background: var(--accent);
             color: white;
         }
         
+        /* Hover effect for submit button. */
         .btn-time-in:hover {
             background: var(--accent-strong);
             transform: translateY(-2px);
             box-shadow: 0 10px 25px rgba(37, 99, 235, 0.3);
         }
         
+        /* Feedback message container. */
         .message {
             padding: 15px;
             border-radius: 12px;
@@ -207,23 +234,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             font-weight: 500;
         }
         
+        /* Success message style. */
         .message.success {
             background: #dcfce7;
             color: #166534;
             border: 1px solid rgba(22, 163, 74, 0.2);
         }
         
+        /* Error message style. */
         .message.error {
             background: #fee2e2;
             color: #991b1b;
             border: 1px solid rgba(220, 38, 38, 0.25);
         }
         
+        /* Admin link container. */
         .admin-link {
             text-align: center;
             margin-top: 20px;
         }
         
+        /* Admin link styling. */
         .admin-link a {
             color: var(--accent);
             text-decoration: none;
@@ -235,10 +266,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             text-decoration: underline;
         }
         
+        /* Required asterisk color. */
         .required {
             color: var(--error);
         }
 
+        /* Informational note box (not used currently). */
         .info-note {
             background: #eff6ff;
             border-left: 4px solid var(--accent);
@@ -248,6 +281,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             color: #1e3a8a;
         }
 
+        /* Two-column layout on larger screens. */
         @media (min-width: 900px) {
             .form-grid {
                 grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -258,6 +292,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
         }
 
+        /* Mobile spacing adjustments. */
         @media (max-width: 640px) {
             body {
                 padding: 20px 14px 30px;
@@ -280,17 +315,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <p>Library Visitor Log System</p>
         </div>
         
+        <!-- Live date/time display -->
         <div class="datetime-display">
             <div class="date" id="currentDate"></div>
             <div class="time" id="currentTime"></div>
         </div>
 
+        <!-- Status message after form submission -->
         <?php if ($message): ?>
             <div class="message <?php echo $messageType; ?>">
                 <?php echo $message; ?>
             </div>
         <?php endif; ?>
         
+        <!-- Log entry form -->
         <form method="POST" action="" id="logForm" class="form-grid">
             <div class="form-group">
                 <label for="name">Full Name <span class="required">*</span></label>
@@ -324,6 +362,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </div>
     
     <script>
+        // Update the date/time display in the Asia/Manila timezone.
         function updateDateTime() {
             const now = new Date();
             
@@ -347,11 +386,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             document.getElementById('currentTime').textContent = timeStr;
         }
         
-        // Update time every second
+        // Update time every second.
         updateDateTime();
         setInterval(updateDateTime, 1000);
         
-        // Clear form after submission if successful
+        // Clear form after submission if successful.
         <?php if ($messageType === 'success'): ?>
         setTimeout(function() {
             document.getElementById('logForm').reset();
