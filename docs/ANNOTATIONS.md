@@ -6,7 +6,8 @@ This file explains what each project file does and highlights key blocks. It is 
 Purpose: Public visitor log form and form submission handler.
 Key blocks:
 - Bootstrap inclusion for DB/session/helpers.
-- POST handler that validates fields and inserts into `logbook_entries`.
+- POST handler that validates organization category (`district_school`, `division_office`, `other`) and inserts into normalized `logbook_entries`.
+- District/school lookup loading from reference tables.
 - Flash message display and redirect to prevent resubmission.
 - HTML form UI for public logging.
 
@@ -15,7 +16,8 @@ Purpose: Admin logbook list with filters, pagination, and delete actions.
 Key blocks:
 - Admin access guard.
 - Delete action handling via query parameter.
-- Filter parsing and query building.
+- Filter parsing and query building (date, name, client type, district, school, other organization).
+- Joined reads from `districts`/`schools` to render organization labels.
 - Pagination calculation and data query.
 - Table rendering and pagination links.
 
@@ -31,7 +33,8 @@ Key blocks:
 Purpose: Export filtered logbook entries to CSV.
 Key blocks:
 - Admin access guard.
-- Filter parsing and query building.
+- Filter parsing and query building (same filters as dashboard).
+- Joined CSV export with district, school, and other organization columns.
 - CSV headers, BOM for Excel, and row output.
 
 **File: admin/logout.php**
@@ -65,6 +68,8 @@ Key blocks:
 - Flash message set/consume helpers.
 - Redirect helpers.
 - Badge class normalizer for client types.
+- District and school lookup loaders.
+- Organization label formatter for admin display.
 
 **File: includes/partials/document_start.php**
 Purpose: Shared HTML document start for consistent layout.
@@ -99,13 +104,16 @@ Purpose: Small client-side enhancements for the public page.
 Key blocks:
 - Date display in Asia/Manila timezone.
 - Flash message auto-hide.
+- Dynamic visibility rules for organization category.
+- District -> school dependent dropdown population.
 
 **File: database.sql**
 Purpose: Database schema and default admin user.
 Key blocks:
 - `library_logs` creation.
 - `users` table with hashed password.
-- `logbook_entries` table with indexes.
+- `districts` and `schools` reference tables with foreign keys.
+- Normalized `logbook_entries` with district/school foreign keys and free-text organization fallback.
 
 **File: README.md**
 Purpose: Project overview, installation, and usage guide.

@@ -12,8 +12,10 @@
 2. Click the "Import" tab.
 3. Choose file: `database.sql`
 4. Click "Go".
-5. Database `library_logs` will be created with 2 tables:
+5. Database `library_logs` will be created with 4 tables:
 - `users` (admin accounts)
+- `districts` (district master list)
+- `schools` (school master list linked to districts)
 - `logbook_entries` (visitor logs)
 
 ### 3. COPY FILES TO XAMPP
@@ -28,6 +30,12 @@
 ### 5. DEFAULT LOGIN
 - Username: `admin`
 - Password: `admin123`
+
+### 6. OPTIONAL: IMPORT OFFICIAL DISTRICT-SCHOOL LIST
+1. Prepare CSV with columns: `district,school` (see `docs\school_master_template.csv`)
+2. Generate SQL:
+`php scripts\generate_school_seed.php your_master_list.csv school_seed.sql`
+3. Import `school_seed.sql` into `library_logs` using phpMyAdmin
 
 ## FOLDER STRUCTURE (IMPORTANT FILES)
 ```
@@ -62,7 +70,7 @@ C:\xampp\htdocs\library-system\
 
 VISITOR SIDE:
 - Visitor opens: http://localhost/library-system
-- Fills in: Name, Client Type, Position, District, Purpose
+- Fills in: Name, Client Type, Position, Organization Category, then District + School (if applicable), Purpose
 - Clicks "SUBMIT LOG"
 - Date and time are automatically recorded
 - Single visit entry only (no time-out tracking)
@@ -72,7 +80,7 @@ ADMIN SIDE:
 - Admin opens: http://localhost/library-system/admin/login.php
 - Logs in with: admin / admin123
 - Views all visitor logs in dashboard
-- Can filter by date, name, or client type
+- Can filter by date, name, client type, district, school, and organization text
 - Can export logs to CSV
 - Can delete entries if needed
 
