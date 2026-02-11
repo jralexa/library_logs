@@ -3,7 +3,7 @@
 define('DB_HOST', 'localhost');
 define('DB_USER', 'root');
 define('DB_PASS', ''); // Default XAMPP password is empty
-define('DB_NAME', 'liblogs_db'); // Your existing database
+define('DB_NAME', 'library_logs'); // Your existing database
 
 // Create connection.
 $conn = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);

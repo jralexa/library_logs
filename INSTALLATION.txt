@@ -12,7 +12,7 @@
 2. Click the "Import" tab.
 3. Choose file: `database.sql`
 4. Click "Go".
-5. Database `liblogs_db` will be created with 2 tables:
+5. Database `library_logs` will be created with 2 tables:
 - `users` (admin accounts)
 - `logbook_entries` (visitor logs)
 

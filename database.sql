@@ -1,7 +1,7 @@
 -- Database schema for the library log system.
 -- Database: liblogs_db
-CREATE DATABASE IF NOT EXISTS liblogs_db;
-USE liblogs_db;
+CREATE DATABASE IF NOT EXISTS library_logs;
+USE library_logs;
 
 -- Users table (for admin login)
 CREATE TABLE IF NOT EXISTS users (

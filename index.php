@@ -99,11 +99,6 @@ require __DIR__ . '/includes/partials/document_start.php';
                 SUBMIT LOG
             </button>
         </form>
-
-        <!-- Admin link -->
-        <div class="admin-link">
-            <a href="admin/login.php">Admin Login</a>
-        </div>
     </div>
 
 <?php

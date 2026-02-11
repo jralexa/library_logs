@@ -103,7 +103,7 @@ Key blocks:
 **File: database.sql**
 Purpose: Database schema and default admin user.
 Key blocks:
-- `liblogs_db` creation.
+- `library_logs` creation.
 - `users` table with hashed password.
 - `logbook_entries` table with indexes.
 

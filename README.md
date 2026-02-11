@@ -135,11 +135,11 @@ Note: The system records a single visit entry; there is no time-out field.
 - Verify MySQL is running
 - Check `config/database.php` for correct credentials
 - Default XAMPP MySQL password is empty
-- Make sure database name is `liblogs_db`
+- Make sure database name is `library_logs`
 
 ### Cannot login as admin
 - Make sure you imported `database.sql`
-- Check if the `users` table exists in `liblogs_db`
+- Check if the `users` table exists in `library_logs`
 - Use default credentials: admin / admin123
 
 ### Form submission not working
