@@ -13,33 +13,33 @@ $error = '';
 
 // Handle login submissions.
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $username = trim($_POST['username']);
-    $password = $_POST['password'];
-    
+    $username = trim((string)$_POST['username']);
+    $password = (string)$_POST['password'];
+
     // Fetch the user by username.
-    $stmt = $conn->prepare("SELECT id, username, password, role FROM users WHERE username = ?");
-    $stmt->bind_param("s", $username);
+    $stmt = $conn->prepare('SELECT id, username, password, role FROM users WHERE username = ?');
+    $stmt->bind_param('s', $username);
     $stmt->execute();
     $result = $stmt->get_result();
-    
+
     if ($result->num_rows === 1) {
         $user = $result->fetch_assoc();
-        
+
         // Validate the password hash.
         if (password_verify($password, $user['password'])) {
             $_SESSION['user_id'] = $user['id'];
             $_SESSION['username'] = $user['username'];
             $_SESSION['role'] = $user['role'];
-            
+
             header('Location: dashboard.php');
             exit();
-        } else {
-            $error = 'Invalid username or password';
         }
+
+        $error = 'Invalid username or password';
     } else {
         $error = 'Invalid username or password';
     }
-    
+
     $stmt->close();
 }
 ?>
@@ -50,159 +50,186 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Login - DepEd Library</title>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap');
+
+        :root {
+            --bg: #f2f5f9;
+            --card: #ffffff;
+            --ink: #0f172a;
+            --muted: #64748b;
+            --line: #dbe2ea;
+            --accent: #0f766e;
+            --accent-strong: #0b5f59;
+            --danger-bg: #fee2e2;
+            --danger-ink: #991b1b;
+        }
+
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
-        
+
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: 'Manrope', system-ui, -apple-system, Segoe UI, sans-serif;
+            background:
+                radial-gradient(900px 500px at 20% 12%, #dbeafe 0%, transparent 60%),
+                radial-gradient(700px 500px at 90% 0%, #ccfbf1 0%, transparent 58%),
+                var(--bg);
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 20px;
+            padding: 24px 16px;
+            color: var(--ink);
         }
-        
+
         .login-container {
-            background: white;
-            padding: 40px;
-            border-radius: 15px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            background: var(--card);
+            padding: 28px 24px 24px;
+            border-radius: 16px;
+            border: 1px solid rgba(15, 23, 42, 0.08);
+            box-shadow: 0 16px 45px rgba(15, 23, 42, 0.12);
             width: 100%;
-            max-width: 400px;
+            max-width: 420px;
         }
-        
+
         .login-header {
             text-align: center;
-            margin-bottom: 30px;
+            margin-bottom: 22px;
         }
-        
+
         .login-header h1 {
-            color: #333;
             font-size: 24px;
-            margin-bottom: 5px;
+            letter-spacing: -0.3px;
+            margin-bottom: 4px;
         }
-        
+
         .login-header p {
-            color: #666;
+            color: var(--muted);
             font-size: 14px;
         }
-        
+
         .form-group {
-            margin-bottom: 20px;
+            margin-bottom: 14px;
         }
-        
+
         label {
             display: block;
-            margin-bottom: 8px;
-            color: #333;
+            margin-bottom: 7px;
             font-weight: 600;
-            font-size: 14px;
+            font-size: 13px;
         }
-        
-        input[type="text"],
-        input[type="password"] {
+
+        input[type='text'],
+        input[type='password'] {
             width: 100%;
-            padding: 12px;
-            border: 2px solid #e0e0e0;
+            padding: 11px 12px;
+            border: 1px solid var(--line);
             border-radius: 8px;
             font-size: 14px;
-            transition: border-color 0.3s;
+            color: var(--ink);
+            transition: border-color 0.2s, box-shadow 0.2s;
+            background: #fff;
         }
-        
-        input[type="text"]:focus,
-        input[type="password"]:focus {
+
+        input[type='text']:focus,
+        input[type='password']:focus {
             outline: none;
-            border-color: #667eea;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 4px rgba(15, 118, 110, 0.14);
         }
-        
+
         .error {
-            background: #fee2e2;
-            color: #991b1b;
-            padding: 12px;
+            background: var(--danger-bg);
+            color: var(--danger-ink);
+            padding: 10px 12px;
             border-radius: 8px;
-            margin-bottom: 20px;
-            font-size: 14px;
-            border: 2px solid #ef4444;
+            margin-bottom: 14px;
+            font-size: 13px;
+            border: 1px solid rgba(220, 38, 38, 0.3);
         }
-        
+
         .btn-login {
             width: 100%;
-            padding: 15px;
-            background: #667eea;
+            margin-top: 6px;
+            padding: 12px 14px;
+            background: var(--accent);
             color: white;
             border: none;
             border-radius: 8px;
-            font-size: 16px;
+            font-size: 14px;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.3s;
+            transition: background 0.2s, transform 0.2s;
         }
-        
+
         .btn-login:hover {
-            background: #5568d3;
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+            background: var(--accent-strong);
+            transform: translateY(-1px);
         }
-        
+
+        .btn-login:focus-visible {
+            outline: none;
+            box-shadow: 0 0 0 4px rgba(15, 118, 110, 0.18);
+        }
+
         .back-link {
             text-align: center;
-            margin-top: 20px;
+            margin-top: 16px;
         }
-        
+
         .back-link a {
-            color: #667eea;
+            color: #0f4b6d;
             text-decoration: none;
-            font-size: 14px;
+            font-size: 13px;
+            font-weight: 600;
         }
-        
+
         .back-link a:hover {
             text-decoration: underline;
         }
-        
-        .info-box {
-            background: #e0e7ff;
-            border: 2px solid #667eea;
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            font-size: 13px;
-            color: #3730a3;
+
+        @media (max-width: 480px) {
+            .login-container {
+                padding: 24px 18px 20px;
+            }
+
+            .login-header h1 {
+                font-size: 22px;
+            }
         }
     </style>
 </head>
 <body>
     <div class="login-container">
         <div class="login-header">
-            <h1>🔐 Admin Login</h1>
+            <h1>Admin Login</h1>
             <p>DepEd Southern Leyte Division Library</p>
         </div>
-        
+
         <?php if ($error): ?>
             <div class="error">
-                <?php echo $error; ?>
+                <?php echo htmlspecialchars($error, ENT_QUOTES, 'UTF-8'); ?>
             </div>
         <?php endif; ?>
-        
+
         <form method="POST" action="">
             <div class="form-group">
                 <label for="username">Username</label>
                 <input type="text" id="username" name="username" required autofocus>
             </div>
-            
+
             <div class="form-group">
                 <label for="password">Password</label>
                 <input type="password" id="password" name="password" required>
             </div>
-            
+
             <button type="submit" class="btn-login">Login</button>
         </form>
-        
+
         <div class="back-link">
-            <a href="../index.php">← Back to Library Log</a>
+            <a href="../index.php">&larr; Back to Library Log</a>
         </div>
     </div>
 </body>
