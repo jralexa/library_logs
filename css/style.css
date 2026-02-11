@@ -4,17 +4,17 @@
 
 /* Design tokens for consistent theming. */
 :root {
-    --bg: #f6f4ef;
-    --ink: #1f2937;
-    --muted: #6b7280;
-    --accent: #2563eb;
-    --accent-strong: #1d4ed8;
+    --bg: #f2f5f9;
+    --ink: #0f172a;
+    --muted: #64748b;
+    --accent: #0f766e;
+    --accent-strong: #0b5f59;
     --card: #ffffff;
-    --line: #e5e7eb;
-    --soft: #f1f5f9;
+    --line: #dbe2ea;
+    --soft: #f8fafc;
     --success: #16a34a;
     --error: #dc2626;
-    --shadow: 0 20px 60px rgba(15, 23, 42, 0.12);
+    --shadow: 0 16px 45px rgba(15, 23, 42, 0.12);
 }
 
 /* Global reset. */
@@ -28,8 +28,8 @@
 body {
     font-family: 'Manrope', system-ui, -apple-system, Segoe UI, sans-serif;
     background:
-        radial-gradient(1200px 600px at 15% 10%, #e2e8f0 0%, transparent 60%),
-        radial-gradient(900px 600px at 90% 0%, #dbeafe 0%, transparent 55%),
+        radial-gradient(1100px 600px at 15% 10%, #dbeafe 0%, transparent 60%),
+        radial-gradient(900px 600px at 90% 0%, #ccfbf1 0%, transparent 55%),
         var(--bg);
     min-height: 100vh;
     padding: 32px 18px 48px;
@@ -44,7 +44,7 @@ body {
     padding: 36px 36px 40px;
     border-radius: 18px;
     box-shadow: var(--shadow);
-    border: 1px solid rgba(15, 23, 42, 0.06);
+    border: 1px solid rgba(15, 23, 42, 0.08);
 }
 
 /* Header/title block - Logo on left, text on right */
@@ -154,7 +154,7 @@ select:focus,
 textarea:focus {
     outline: none;
     border-color: var(--accent);
-    box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.12);
+    box-shadow: 0 0 0 4px rgba(15, 118, 110, 0.14);
 }
 
 /* Textarea sizing. */
@@ -187,7 +187,7 @@ button {
 .btn-time-in:hover {
     background: var(--accent-strong);
     transform: translateY(-2px);
-    box-shadow: 0 10px 25px rgba(37, 99, 235, 0.3);
+    box-shadow: 0 10px 25px rgba(15, 118, 110, 0.3);
 }
 
 /* Feedback message container. */
