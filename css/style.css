@@ -140,6 +140,14 @@ textarea {
     color: var(--ink);
 }
 
+.other-input {
+    margin-top: 10px;
+}
+
+.is-hidden {
+    display: none;
+}
+
 /* Focus ring for accessibility. */
 input[type="text"]:focus,
 select:focus,

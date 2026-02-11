@@ -16,6 +16,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $district = post_value('district');
     $purpose = post_value('purpose');
 
+    if ($name === 'Other') {
+        $name = post_value('name_other');
+    }
+
+    if ($client_type === 'Other') {
+        $client_type = post_value('client_type_other');
+    }
+
+    if ($district === 'Other') {
+        $district = post_value('district_other');
+    }
+
     // Require all fields before insert.
     if ($name && $client_type && $position && $district && $purpose) {
         $log_date = date('Y-m-d');
@@ -72,22 +84,48 @@ require __DIR__ . '/includes/partials/document_start.php';
         <form method="POST" action="" id="logForm" class="form-grid">
             <div class="form-group">
                 <label for="name">Full Name <span class="required">*</span></label>
-                <input type="text" id="name" name="name" required>
+                <select id="name" name="name" required data-other-input="name_other" onchange="toggleOtherInput(this)">
+                    <option value="" selected disabled>Select a name</option>
+                    <option value="Maria Santos">Maria Santos</option>
+                    <option value="Juan Dela Cruz">Juan Dela Cruz</option>
+                    <option value="Ana Reyes">Ana Reyes</option>
+                    <option value="Carlo Mendoza">Carlo Mendoza</option>
+                    <option value="Fatima Lopez">Fatima Lopez</option>
+                    <option value="Other">Other</option>
+                </select>
+                <input type="text" id="name_other" name="name_other" class="other-input is-hidden" placeholder="Enter full name" style="display: none;">
             </div>
             
             <div class="form-group">
-                <label for="client_type">Client Type <span class="required">*</span></label>
-                <input type="text" id="client_type" name="client_type" required placeholder="e.g., Field, OSDS, Visitor, etc.">
+                <label for="client_type">Visitor Type <span class="required">*</span></label>
+                <select id="client_type" name="client_type" required data-other-input="client_type_other" onchange="toggleOtherInput(this)">
+                    <option value="" selected disabled>Select a client type</option>
+                     <option value="Field">Field Personnel</option>
+                     <option value="Division">Division Office Staff</option>
+                     <option value="Visitor">External Visitor</option>
+                    <option value="Other">Other</option>
+                </select>
+                <input type="text" id="client_type_other" name="client_type_other" class="other-input is-hidden" placeholder="Enter client type" style="display: none;">
             </div>
             
             <div class="form-group">
                 <label for="position">Position/Designation <span class="required">*</span></label>
-                <input type="text" id="position" name="position" required placeholder="e.g., Principal, Head Teacher, Utility, ADAS, etc.">
+                <input type="text" id="position" name="position" required placeholder="e.g., AO, Head Teacher, Utility, ADAS, etc.">
             </div>
             
             <div class="form-group">
-                <label for="district">District/School/Office <span class="required">*</span></label>
-                <input type="text" id="district" name="district" required placeholder="e.g., Malibog, Division Office, Bontoc II-District, etc.">
+                <label for="district">Organization <span class="required">*</span></label>
+                <select id="district" name="district" required data-other-input="district_other" onchange="toggleOtherInput(this)">
+                    <option value="" selected disabled>Select a Organization</option>
+                    <option value="Malibog">Malibog</option>
+                    <option value="Division Office">Division Office</option>
+                    <option value="Bontoc II District">Bontoc II District</option>
+                    <option value="Bontoc I District">Bontoc I District</option>
+                    <option value="Hinunangan District">Hinunangan District</option>
+                    <option value="Hinundayan District">Hinundayan District</option>
+                    <option value="Other">Other</option>
+                </select>
+                <input type="text" id="district_other" name="district_other" class="other-input is-hidden" placeholder="Enter district/school/office" style="display: none;">
             </div>
             
             <div class="form-group full">
@@ -102,6 +140,38 @@ require __DIR__ . '/includes/partials/document_start.php';
     </div>
 
 <?php
+$inline_script = <<<'HTML'
+<script>
+function toggleOtherInput(selectEl) {
+    var otherInputId = selectEl.getAttribute('data-other-input');
+    if (!otherInputId) {
+        return;
+    }
+
+    var otherInput = document.getElementById(otherInputId);
+    if (!otherInput) {
+        return;
+    }
+
+    var isOther = selectEl.value === 'Other';
+    otherInput.classList.toggle('is-hidden', !isOther);
+    otherInput.style.display = isOther ? 'block' : 'none';
+    otherInput.required = isOther;
+
+    if (!isOther) {
+        otherInput.value = '';
+    }
+}
+
+document.addEventListener('DOMContentLoaded', function () {
+    var selects = document.querySelectorAll('select[data-other-input]');
+    for (var i = 0; i < selects.length; i += 1) {
+        toggleOtherInput(selects[i]);
+    }
+});
+</script>
+HTML;
+echo $inline_script;
 $scripts = ['js/main.js'];
 require __DIR__ . '/includes/partials/document_end.php';
 ?>

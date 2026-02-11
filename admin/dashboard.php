@@ -165,7 +165,6 @@ require __DIR__ . '/../includes/partials/document_start.php';
                                 <th>Position</th>
                                 <th>District</th>
                                 <th>Purpose</th>
-                                <th>Action</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -182,13 +181,6 @@ require __DIR__ . '/../includes/partials/document_start.php';
                                     <td><?php echo h($row['position'] ?: '-'); ?></td>
                                     <td><?php echo h($row['district']); ?></td>
                                     <td><?php echo h($row['purpose']); ?></td>
-                                    <td>
-                                        <a href="?<?php echo build_query(['delete' => $row['id']]); ?>"
-                                           class="btn btn-danger"
-                                           onclick="return confirm('Delete this entry?')">
-                                            Delete
-                                        </a>
-                                    </td>
                                 </tr>
                             <?php endwhile; ?>
                         </tbody>

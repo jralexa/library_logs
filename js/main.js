@@ -25,5 +25,38 @@ if (flash) {
     }, 3000);
 }
 
+function syncOtherInput(selectEl) {
+    const otherInputId = selectEl.dataset.otherInput;
+    if (!otherInputId) {
+        return;
+    }
+
+    const otherInput = document.getElementById(otherInputId);
+    if (!otherInput) {
+        return;
+    }
+
+    const isOther = selectEl.value === 'Other';
+    otherInput.classList.toggle('is-hidden', !isOther);
+    otherInput.required = isOther;
+
+    if (!isOther) {
+        otherInput.value = '';
+    }
+}
+
+function bindOtherInputs() {
+    document.querySelectorAll('select[data-other-input]').forEach((selectEl) => {
+        syncOtherInput(selectEl);
+        selectEl.addEventListener('change', () => syncOtherInput(selectEl));
+    });
+}
+
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', bindOtherInputs);
+} else {
+    bindOtherInputs();
+}
+
 // Run date update once (no live clock).
 updateDateTime();
