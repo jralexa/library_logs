@@ -117,13 +117,27 @@ require __DIR__ . '/includes/partials/document_start.php';
                 <label for="district">Organization <span class="required">*</span></label>
                 <select id="district" name="district" required data-other-input="district_other" onchange="toggleOtherInput(this)">
                     <option value="" selected disabled>Select a Organization</option>
-                    <option value="Malibog">Malibog</option>
                     <option value="Division Office">Division Office</option>
-                    <option value="Bontoc II District">Bontoc II District</option>
+                    <option value="Maasin City District">Maasin City District</option>
                     <option value="Bontoc I District">Bontoc I District</option>
+                    <option value="Bontoc II District">Bontoc II District</option>
                     <option value="Hinunangan District">Hinunangan District</option>
                     <option value="Hinundayan District">Hinundayan District</option>
+                    <option value="Sogod District">Sogod District</option>
+                    <option value="Libagon District">Libagon District</option>
+                    <option value="Limasawa District">Limasawa District</option>
+                    <option value="Macrohon District">Macrohon District</option>
+                    <option value="Malitbog District">Malitbog District</option>
+                    <option value="Padre Burgos District">Padre Burgos District</option>
+                    <option value="Pintuyan District">Pintuyan District</option>
+                    <option value="San Francisco District">San Francisco District</option>
+                    <option value="San Juan District">San Juan District</option>
+                    <option value="Anahawan District">Anahawan District</option>
+                    <option value="Silago District">Silago District</option>
+                    <option value="St. Bernard District">St. Bernard District</option>
+                    <option value="Tomas Oppus District">Tomas Oppus District</option>
                     <option value="Other">Other</option>
+
                 </select>
                 <input type="text" id="district_other" name="district_other" class="other-input is-hidden" placeholder="Enter district/school/office" style="display: none;">
             </div>
