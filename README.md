@@ -7,12 +7,13 @@ A simple and efficient library visitor logging system built with native PHP for 
 ### Public Side
 - Easy visit logging with a single submission
 - Auto date display and recorded time-in
+- Dependent district -> school selection for detailed organization capture
 - Clean, responsive UI
 - Required fields for consistent data
 
 ### Admin Side
 - Complete log management table
-- Filtering by date, name, or client type
+- Filtering by date, name, client type, district, school, and other organization
 - Export to CSV
 - Delete entries
 - Secure login
@@ -34,7 +35,7 @@ A simple and efficient library visitor logging system built with native PHP for 
 2. Click the "Import" tab
 3. Click "Choose File" and select `database.sql`
 4. Click "Go"
-5. You should see two tables created: `users` and `logbook_entries`
+5. You should see four tables created: `users`, `districts`, `schools`, and `logbook_entries`
 
 ### Step 3: Copy System Files
 1. Locate your XAMPP installation folder (usually `C:\xampp` on Windows)
@@ -46,6 +47,13 @@ A simple and efficient library visitor logging system built with native PHP for 
 1. Open your web browser
 2. Go to `http://localhost/library-system`
 3. You should see the Library Log form
+
+### Optional: Load Official District-School Master List
+1. Prepare CSV using `docs/school_master_template.csv` format (`district,school`).
+2. Generate SQL seed file:
+   `php scripts/generate_school_seed.php your_master_list.csv school_seed.sql`
+3. Import `school_seed.sql` in phpMyAdmin (same `library_logs` database).
+4. This upserts districts/schools and is safe to run multiple times.
 
 ## Default Login Credentials
 
@@ -61,15 +69,16 @@ Important: Change the default password immediately after first login for securit
 
 1. Access the system: `http://localhost/library-system`
 2. Fill in the form
-3. Click "SUBMIT LOG" to record your visit
-4. The current date and time are recorded automatically
+3. If "School in a District" is selected, choose district then school
+4. Click "SUBMIT LOG" to record your visit
+5. The current date and time are recorded automatically
 
 ### For Administrators
 
 1. Login: `http://localhost/library-system/admin/login.php`
 2. Enter credentials: `admin` / `admin123`
 3. View the logbook table
-4. Filter logs by date, name, or client type
+4. Filter logs by date, name, client type, district, school, or organization text
 5. Export data to CSV
 6. Delete incorrect entries
 7. Logout when finished
@@ -119,9 +128,22 @@ htdocs/library-system/
 - `name`: Visitor's full name
 - `client_type`: Type of visitor (free text)
 - `position`: Position or grade level
-- `district`: District name
+- `district_id`: Linked district reference (nullable for non-district organizations)
+- `school_id`: Linked school reference (nullable for non-school organizations)
+- `organization_name`: Free-text organization for Division Office and external organizations
 - `purpose`: Purpose of visit
 - `created_at`: Record creation timestamp
+
+### districts table
+- `id`: Unique identifier
+- `name`: District name
+- `is_active`: Toggle district visibility in forms
+
+### schools table
+- `id`: Unique identifier
+- `district_id`: Parent district
+- `name`: School name
+- `is_active`: Toggle school visibility in forms
 
 Note: The system records a single visit entry; there is no time-out field.
 

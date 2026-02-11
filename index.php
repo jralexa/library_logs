@@ -8,13 +8,20 @@ declare(strict_types=1);
 // Bootstrap shared configuration, session, and helper utilities.
 require_once __DIR__ . '/includes/bootstrap.php';
 
+$districts = load_districts($conn);
+$schools_by_district = load_schools_by_district($conn);
+
 // Handle form submission for new visitor log entries.
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $name = post_value('name');
     $client_type = post_value('client_type');
     $position = post_value('position');
-    $district = post_value('district');
+    $organization_type = post_value('organization_type');
     $purpose = post_value('purpose');
+    $district_id = null;
+    $school_id = null;
+    $organization_name = null;
+    $organization_valid = false;
 
     if ($name === 'Other') {
         $name = post_value('name_other');
@@ -24,21 +31,65 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $client_type = post_value('client_type_other');
     }
 
-    if ($district === 'Other') {
-        $district = post_value('district_other');
+    if ($organization_type === 'district_school') {
+        $district_raw = post_value('district_id');
+        $school_raw = post_value('school_id');
+
+        if (ctype_digit($district_raw) && ctype_digit($school_raw)) {
+            $candidate_district_id = (int)$district_raw;
+            $candidate_school_id = (int)$school_raw;
+
+            // Validate district-school relationship to prevent tampered submissions.
+            $stmt = $conn->prepare(
+                'SELECT s.id
+                 FROM schools s
+                 INNER JOIN districts d ON d.id = s.district_id
+                 WHERE s.id = ? AND s.district_id = ? AND s.is_active = 1 AND d.is_active = 1
+                 LIMIT 1'
+            );
+            $stmt->bind_param('ii', $candidate_school_id, $candidate_district_id);
+            $stmt->execute();
+            $result = $stmt->get_result();
+
+            if ($result->num_rows === 1) {
+                $district_id = $candidate_district_id;
+                $school_id = $candidate_school_id;
+                $organization_valid = true;
+            }
+
+            $stmt->close();
+        }
+    } elseif ($organization_type === 'division_office') {
+        $organization_name = 'Division Office';
+        $organization_valid = true;
+    } elseif ($organization_type === 'other') {
+        $organization_name = post_value('organization_name');
+        $organization_valid = $organization_name !== '';
     }
 
     // Require all fields before insert.
-    if ($name && $client_type && $position && $district && $purpose) {
+    if ($name && $client_type && $position && $purpose && $organization_valid) {
         $log_date = date('Y-m-d');
         $current_time = date('H:i:s');
 
         // Persist the log entry using a prepared statement.
         $stmt = $conn->prepare(
-            "INSERT INTO logbook_entries (date, time_in, name, client_type, position, district, purpose)
-             VALUES (?, ?, ?, ?, ?, ?, ?)"
+            'INSERT INTO logbook_entries (
+                date, time_in, name, client_type, position, district_id, school_id, organization_name, purpose
+             ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)'
         );
-        $stmt->bind_param("sssssss", $log_date, $current_time, $name, $client_type, $position, $district, $purpose);
+        $stmt->bind_param(
+            'sssssiiss',
+            $log_date,
+            $current_time,
+            $name,
+            $client_type,
+            $position,
+            $district_id,
+            $school_id,
+            $organization_name,
+            $purpose
+        );
 
         // Store a flash message for the next request.
         if ($stmt->execute()) {
@@ -93,7 +144,7 @@ require __DIR__ . '/includes/partials/document_start.php';
                     <option value="Fatima Lopez">Fatima Lopez</option>
                     <option value="Other">Other</option>
                 </select>
-                <input type="text" id="name_other" name="name_other" class="other-input is-hidden" placeholder="Enter full name" style="display: none;">
+                <input type="text" id="name_other" name="name_other" class="other-input is-hidden" placeholder="Enter full name">
             </div>
             
             <div class="form-group">
@@ -105,7 +156,7 @@ require __DIR__ . '/includes/partials/document_start.php';
                      <option value="Visitor">External Visitor</option>
                     <option value="Other">Other</option>
                 </select>
-                <input type="text" id="client_type_other" name="client_type_other" class="other-input is-hidden" placeholder="Enter client type" style="display: none;">
+                <input type="text" id="client_type_other" name="client_type_other" class="other-input is-hidden" placeholder="Enter client type">
             </div>
             
             <div class="form-group">
@@ -114,32 +165,35 @@ require __DIR__ . '/includes/partials/document_start.php';
             </div>
             
             <div class="form-group">
-                <label for="district">Organization <span class="required">*</span></label>
-                <select id="district" name="district" required data-other-input="district_other" onchange="toggleOtherInput(this)">
-                    <option value="" selected disabled>Select a Organization</option>
-                    <option value="Division Office">Division Office</option>
-                    <option value="Maasin City District">Maasin City District</option>
-                    <option value="Bontoc I District">Bontoc I District</option>
-                    <option value="Bontoc II District">Bontoc II District</option>
-                    <option value="Hinunangan District">Hinunangan District</option>
-                    <option value="Hinundayan District">Hinundayan District</option>
-                    <option value="Sogod District">Sogod District</option>
-                    <option value="Libagon District">Libagon District</option>
-                    <option value="Limasawa District">Limasawa District</option>
-                    <option value="Macrohon District">Macrohon District</option>
-                    <option value="Malitbog District">Malitbog District</option>
-                    <option value="Padre Burgos District">Padre Burgos District</option>
-                    <option value="Pintuyan District">Pintuyan District</option>
-                    <option value="San Francisco District">San Francisco District</option>
-                    <option value="San Juan District">San Juan District</option>
-                    <option value="Anahawan District">Anahawan District</option>
-                    <option value="Silago District">Silago District</option>
-                    <option value="St. Bernard District">St. Bernard District</option>
-                    <option value="Tomas Oppus District">Tomas Oppus District</option>
-                    <option value="Other">Other</option>
-
+                <label for="organization_type">Organization Category <span class="required">*</span></label>
+                <select id="organization_type" name="organization_type" required>
+                    <option value="" selected disabled>Select organization category</option>
+                    <option value="district_school">School in a District</option>
+                    <option value="division_office">Division Office</option>
+                    <option value="other">Other Organization</option>
                 </select>
-                <input type="text" id="district_other" name="district_other" class="other-input is-hidden" placeholder="Enter district/school/office" style="display: none;">
+            </div>
+
+            <div class="form-group is-hidden" id="districtGroup">
+                <label for="district_id">District <span class="required">*</span></label>
+                <select id="district_id" name="district_id" data-role="district-select" disabled>
+                    <option value="" selected disabled>Select a district</option>
+                    <?php foreach ($districts as $district): ?>
+                        <option value="<?php echo h((string)$district['id']); ?>"><?php echo h($district['name']); ?></option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+
+            <div class="form-group is-hidden" id="schoolGroup">
+                <label for="school_id">School <span class="required">*</span></label>
+                <select id="school_id" name="school_id" data-role="school-select" disabled>
+                    <option value="" selected disabled>Select a school</option>
+                </select>
+            </div>
+
+            <div class="form-group is-hidden" id="organizationNameGroup">
+                <label for="organization_name">Organization Name <span class="required">*</span></label>
+                <input type="text" id="organization_name" name="organization_name" class="other-input" placeholder="Enter organization name">
             </div>
             
             <div class="form-group full">
@@ -156,35 +210,14 @@ require __DIR__ . '/includes/partials/document_start.php';
 <?php
 $inline_script = <<<'HTML'
 <script>
-function toggleOtherInput(selectEl) {
-    var otherInputId = selectEl.getAttribute('data-other-input');
-    if (!otherInputId) {
-        return;
-    }
-
-    var otherInput = document.getElementById(otherInputId);
-    if (!otherInput) {
-        return;
-    }
-
-    var isOther = selectEl.value === 'Other';
-    otherInput.classList.toggle('is-hidden', !isOther);
-    otherInput.style.display = isOther ? 'block' : 'none';
-    otherInput.required = isOther;
-
-    if (!isOther) {
-        otherInput.value = '';
-    }
-}
-
-document.addEventListener('DOMContentLoaded', function () {
-    var selects = document.querySelectorAll('select[data-other-input]');
-    for (var i = 0; i < selects.length; i += 1) {
-        toggleOtherInput(selects[i]);
-    }
-});
+window.schoolMap = __SCHOOL_MAP__;
 </script>
 HTML;
+$inline_script = str_replace(
+    '__SCHOOL_MAP__',
+    json_encode($schools_by_district, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT),
+    $inline_script
+);
 echo $inline_script;
 $scripts = ['js/main.js'];
 require __DIR__ . '/includes/partials/document_end.php';

@@ -25,7 +25,6 @@ function build_query(array $overrides = [], array $exclude = []): string
 $delete_id = get_value('delete');
 if ($delete_id !== '' && ctype_digit($delete_id)) {
     $id = (int)$delete_id;
-    // Delete the selected log entry.
     $stmt = $conn->prepare('DELETE FROM logbook_entries WHERE id = ?');
     $stmt->bind_param('i', $id);
 
@@ -37,39 +36,85 @@ if ($delete_id !== '' && ctype_digit($delete_id)) {
 
     $stmt->close();
 
-    // Redirect back to the list view without the delete parameter.
     $query = build_query([], ['delete']);
     $redirect = 'dashboard.php' . ($query ? ('?' . $query) : '');
     redirect_to($redirect);
+}
+
+$districts = load_districts($conn);
+$schools_by_district = load_schools_by_district($conn);
+
+$school_options = [];
+foreach ($schools_by_district as $district_id => $district_schools) {
+    foreach ($district_schools as $school) {
+        $school_options[] = [
+            'id' => $school['id'],
+            'district_id' => (int)$district_id,
+            'name' => $school['name'],
+        ];
+    }
 }
 
 // Read filter inputs.
 $filter_date = get_value('filter_date');
 $filter_name = get_value('filter_name');
 $filter_client_type = get_value('filter_client_type');
+$filter_district_id = get_value('filter_district_id');
+$filter_school_id = get_value('filter_school_id');
+$filter_organization = get_value('filter_organization');
+
+if ($filter_district_id !== '' && !ctype_digit($filter_district_id)) {
+    $filter_district_id = '';
+}
+if ($filter_school_id !== '' && !ctype_digit($filter_school_id)) {
+    $filter_school_id = '';
+}
 
 // Build a parameterized WHERE clause based on filters.
 $where = ' WHERE 1=1';
 $params = [];
 $types = '';
 
-if ($filter_date) {
-    $where .= ' AND date = ?';
+if ($filter_date !== '') {
+    $where .= ' AND le.date = ?';
     $params[] = $filter_date;
     $types .= 's';
 }
 
-if ($filter_name) {
-    $where .= ' AND name LIKE ?';
+if ($filter_name !== '') {
+    $where .= ' AND le.name LIKE ?';
     $params[] = '%' . $filter_name . '%';
     $types .= 's';
 }
 
-if ($filter_client_type) {
-    $where .= ' AND client_type LIKE ?';
+if ($filter_client_type !== '') {
+    $where .= ' AND le.client_type LIKE ?';
     $params[] = '%' . $filter_client_type . '%';
     $types .= 's';
 }
+
+if ($filter_district_id !== '') {
+    $where .= ' AND le.district_id = ?';
+    $params[] = (int)$filter_district_id;
+    $types .= 'i';
+}
+
+if ($filter_school_id !== '') {
+    $where .= ' AND le.school_id = ?';
+    $params[] = (int)$filter_school_id;
+    $types .= 'i';
+}
+
+if ($filter_organization !== '') {
+    $where .= ' AND le.organization_name LIKE ?';
+    $params[] = '%' . $filter_organization . '%';
+    $types .= 's';
+}
+
+$from_clause =
+    ' FROM logbook_entries le
+      LEFT JOIN districts d ON d.id = le.district_id
+      LEFT JOIN schools s ON s.id = le.school_id';
 
 // Pagination settings.
 $page = get_value('page');
@@ -78,7 +123,7 @@ $page_size = 50;
 $offset = ($page - 1) * $page_size;
 
 // Count total rows for pagination.
-$count_query = 'SELECT COUNT(*) AS total FROM logbook_entries' . $where;
+$count_query = 'SELECT COUNT(*) AS total' . $from_clause . $where;
 $count_stmt = $conn->prepare($count_query);
 if (!empty($params)) {
     $count_stmt->bind_param($types, ...$params);
@@ -93,7 +138,11 @@ $page = min($page, $total_pages);
 $offset = ($page - 1) * $page_size;
 
 // Fetch current page of records.
-$query = 'SELECT * FROM logbook_entries' . $where . ' ORDER BY date DESC, time_in DESC LIMIT ? OFFSET ?';
+$query =
+    'SELECT le.*, d.name AS district_name, s.name AS school_name' .
+    $from_clause .
+    $where .
+    ' ORDER BY le.date DESC, le.time_in DESC LIMIT ? OFFSET ?';
 
 $params_with_page = $params;
 $types_with_page = $types . 'ii';
@@ -101,9 +150,7 @@ $params_with_page[] = $page_size;
 $params_with_page[] = $offset;
 
 $stmt = $conn->prepare($query);
-if (!empty($params_with_page)) {
-    $stmt->bind_param($types_with_page, ...$params_with_page);
-}
+$stmt->bind_param($types_with_page, ...$params_with_page);
 $stmt->execute();
 $result = $stmt->get_result();
 
@@ -143,6 +190,39 @@ require __DIR__ . '/../includes/partials/document_start.php';
                             <label for="filter_client_type">Client Type</label>
                             <input type="text" id="filter_client_type" name="filter_client_type" value="<?php echo h($filter_client_type); ?>" placeholder="Search type...">
                         </div>
+
+                        <div class="filter-group">
+                            <label for="filter_district_id">District</label>
+                            <select id="filter_district_id" name="filter_district_id">
+                                <option value="">All districts</option>
+                                <?php foreach ($districts as $district): ?>
+                                    <option value="<?php echo h((string)$district['id']); ?>" <?php echo ((string)$district['id'] === $filter_district_id) ? 'selected' : ''; ?>>
+                                        <?php echo h($district['name']); ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+
+                        <div class="filter-group">
+                            <label for="filter_school_id">School</label>
+                            <select id="filter_school_id" name="filter_school_id">
+                                <option value="">All schools</option>
+                                <?php foreach ($school_options as $school): ?>
+                                    <option
+                                        value="<?php echo h((string)$school['id']); ?>"
+                                        data-district-id="<?php echo h((string)$school['district_id']); ?>"
+                                        <?php echo ((string)$school['id'] === $filter_school_id) ? 'selected' : ''; ?>
+                                    >
+                                        <?php echo h($school['name']); ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+
+                        <div class="filter-group">
+                            <label for="filter_organization">Other Organization</label>
+                            <input type="text" id="filter_organization" name="filter_organization" value="<?php echo h($filter_organization); ?>" placeholder="Division Office, NGO, etc.">
+                        </div>
                     </div>
 
                     <div class="filter-actions">
@@ -163,15 +243,15 @@ require __DIR__ . '/../includes/partials/document_start.php';
                                 <th>Name</th>
                                 <th>Type</th>
                                 <th>Position</th>
-                                <th>District</th>
+                                <th>Organization</th>
                                 <th>Purpose</th>
                             </tr>
                         </thead>
                         <tbody>
                             <?php while ($row = $result->fetch_assoc()): ?>
                                 <tr>
-                                    <td><?php echo h(date('M d, Y', strtotime($row['date']))); ?></td>
-                                    <td><?php echo h(date('h:i A', strtotime($row['time_in']))); ?></td>
+                                    <td><?php echo h(date('M d, Y', strtotime((string)$row['date']))); ?></td>
+                                    <td><?php echo h(date('h:i A', strtotime((string)$row['time_in']))); ?></td>
                                     <td><?php echo h($row['name']); ?></td>
                                     <td>
                                         <span class="badge <?php echo h(client_type_badge_class((string)$row['client_type'])); ?>">
@@ -179,7 +259,7 @@ require __DIR__ . '/../includes/partials/document_start.php';
                                         </span>
                                     </td>
                                     <td><?php echo h($row['position'] ?: '-'); ?></td>
-                                    <td><?php echo h($row['district']); ?></td>
+                                    <td><?php echo h(organization_label($row['district_name'], $row['school_name'], $row['organization_name'])); ?></td>
                                     <td><?php echo h($row['purpose']); ?></td>
                                 </tr>
                             <?php endwhile; ?>
@@ -237,6 +317,40 @@ require __DIR__ . '/../includes/partials/document_start.php';
             <?php endif; ?>
         </div>
     </div>
+
+    <script>
+    (function () {
+        var districtSelect = document.getElementById('filter_district_id');
+        var schoolSelect = document.getElementById('filter_school_id');
+
+        if (!districtSelect || !schoolSelect) {
+            return;
+        }
+
+        function syncSchoolFilter() {
+            var districtValue = districtSelect.value;
+            var options = schoolSelect.querySelectorAll('option[data-district-id]');
+            var selectedStillVisible = false;
+
+            for (var i = 0; i < options.length; i += 1) {
+                var option = options[i];
+                var matchesDistrict = !districtValue || option.getAttribute('data-district-id') === districtValue;
+                option.hidden = !matchesDistrict;
+
+                if (matchesDistrict && option.selected) {
+                    selectedStillVisible = true;
+                }
+            }
+
+            if (!selectedStillVisible && schoolSelect.value !== '') {
+                schoolSelect.value = '';
+            }
+        }
+
+        districtSelect.addEventListener('change', syncSchoolFilter);
+        syncSchoolFilter();
+    })();
+    </script>
 <?php
 $stmt->close();
 $conn->close();
