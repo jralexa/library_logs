@@ -182,7 +182,7 @@ require __DIR__ . '/includes/partials/document_start.php';
         <!-- Log entry form -->
         <form method="POST" action="" id="logForm" class="form-grid">
             <div class="form-group">
-                <label for="client_type">Client Type <span class="required">*</span></label>
+                <label for="client_type">Client Categories <span class="required">*</span></label>
                 <select id="client_type" name="client_type" required>
                     <option value="" selected disabled>Select a client type</option>
                     <?php if (!empty($client_types)): ?>
