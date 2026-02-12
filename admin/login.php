@@ -75,17 +75,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             background:
                 radial-gradient(900px 500px at 20% 12%, #dbeafe 0%, transparent 60%),
                 radial-gradient(700px 500px at 90% 0%, #ccfbf1 0%, transparent 58%),
-                var(--bg);
+                #f2f5f9;
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
             padding: 24px 16px;
-            color: var(--ink);
+            color: #0f172a;
         }
 
         .login-container {
-            background: var(--card);
+            background: #ffffff;
             padding: 28px 24px 24px;
             border-radius: 16px;
             border: 1px solid rgba(15, 23, 42, 0.08);
@@ -106,7 +106,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         .login-header p {
-            color: var(--muted);
+            color: #64748b;
             font-size: 14px;
         }
 
@@ -125,10 +125,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         input[type='password'] {
             width: 100%;
             padding: 11px 12px;
-            border: 1px solid var(--line);
+            border: 1px solid #dbe2ea;
             border-radius: 8px;
             font-size: 14px;
-            color: var(--ink);
+            color: #0f172a;
             transition: border-color 0.2s, box-shadow 0.2s;
             background: #fff;
         }
@@ -136,13 +136,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         input[type='text']:focus,
         input[type='password']:focus {
             outline: none;
-            border-color: var(--accent);
+            border-color: #0f766e;
             box-shadow: 0 0 0 4px rgba(15, 118, 110, 0.14);
         }
 
         .error {
-            background: var(--danger-bg);
-            color: var(--danger-ink);
+            background: #fee2e2;
+            color: #991b1b;
             padding: 10px 12px;
             border-radius: 8px;
             margin-bottom: 14px;
@@ -154,7 +154,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             width: 100%;
             margin-top: 6px;
             padding: 12px 14px;
-            background: var(--accent);
+            background: #0f766e;
             color: white;
             border: none;
             border-radius: 8px;
@@ -165,7 +165,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         .btn-login:hover {
-            background: var(--accent-strong);
+            background: #0b5f59;
             transform: translateY(-1px);
         }
 

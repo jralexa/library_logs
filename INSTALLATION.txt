@@ -12,10 +12,12 @@
 2. Click the "Import" tab.
 3. Choose file: `database.sql`
 4. Click "Go".
-5. Database `library_logs` will be created with 4 tables:
+5. Database `library_logs` will be created with 6 tables:
 - `users` (admin accounts)
 - `districts` (district master list)
 - `schools` (school master list linked to districts)
+- `client_types` (verified visitor categories)
+- `personnel` (verified division/field personnel)
 - `logbook_entries` (visitor logs)
 
 ### 3. COPY FILES TO XAMPP
@@ -31,11 +33,14 @@
 - Username: `admin`
 - Password: `admin123`
 
-### 6. OPTIONAL: IMPORT OFFICIAL DISTRICT-SCHOOL LIST
-1. Prepare CSV with columns: `district,school` (see `docs\school_master_template.csv`)
-2. Generate SQL:
-`php scripts\generate_school_seed.php your_master_list.csv school_seed.sql`
-3. Import `school_seed.sql` into `library_logs` using phpMyAdmin
+### 6. OPTIONAL: REFRESH VERIFIED MASTER DATA
+1. Replace source files in `docs\`:
+   - `Database_2025-2026.xlsx`
+   - `List_of_Divisionb_Personnel.docx`
+2. Regenerate:
+   - `docs\verified_district_school_master.csv`
+   - `docs\verified_personnel_master.csv`
+3. Rebuild/import `database.sql` into `library_logs`
 
 ## FOLDER STRUCTURE (IMPORTANT FILES)
 ```
@@ -80,6 +85,8 @@ ADMIN SIDE:
 - Admin opens: http://localhost/library-system/admin/login.php
 - Logs in with: admin / admin123
 - Views all visitor logs in dashboard
+- Opens master data page: http://localhost/library-system/admin/master_data.php
+- Manages client types and personnel records
 - Can filter by date, name, client type, district, school, and organization text
 - Can export logs to CSV
 - Can delete entries if needed

@@ -48,13 +48,75 @@ function redirect_self(): void
 function client_type_badge_class(string $value): string
 {
     $normalized = strtolower(trim($value));
-    $known = ['student', 'teacher', 'staff', 'field', 'visitor'];
+    $normalized = str_replace([' ', '-'], '_', $normalized);
 
-    if (in_array($normalized, $known, true)) {
-        return 'badge-' . $normalized;
+    if (in_array($normalized, ['field', 'field_personnel'], true)) {
+        return 'badge-field';
+    }
+
+    if (in_array($normalized, ['division', 'division_office_staff', 'division_office_personnel'], true)) {
+        return 'badge-staff';
+    }
+
+    if ($normalized === 'visitor') {
+        return 'badge-visitor';
     }
 
     return 'badge-other';
+}
+
+function load_client_types(mysqli $conn): array
+{
+    $rows = [];
+    $result = $conn->query(
+        'SELECT id, code, label
+         FROM client_types
+         WHERE is_active = 1
+         ORDER BY label ASC'
+    );
+
+    if ($result instanceof mysqli_result) {
+        while ($row = $result->fetch_assoc()) {
+            $rows[] = [
+                'id' => (int)$row['id'],
+                'code' => $row['code'],
+                'label' => $row['label'],
+            ];
+        }
+        $result->free();
+    }
+
+    return $rows;
+}
+
+function load_personnel_by_client_type(mysqli $conn): array
+{
+    $map = [];
+    $result = $conn->query(
+        'SELECT p.id, p.full_name, p.position_title, ct.id AS client_type_id
+         FROM personnel p
+         INNER JOIN client_types ct ON ct.id = p.client_type_id
+         WHERE p.is_active = 1 AND ct.is_active = 1
+         ORDER BY ct.label ASC, p.full_name ASC'
+    );
+
+    if ($result instanceof mysqli_result) {
+        while ($row = $result->fetch_assoc()) {
+            $clientTypeId = (string)$row['client_type_id'];
+            if (!isset($map[$clientTypeId])) {
+                $map[$clientTypeId] = [];
+            }
+
+            $map[$clientTypeId][] = [
+                'id' => (int)$row['id'],
+                'full_name' => $row['full_name'],
+                'position_title' => $row['position_title'],
+            ];
+        }
+        $result->free();
+    }
+
+    return $map;
 }
 
 function load_districts(mysqli $conn): array

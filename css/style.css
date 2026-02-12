@@ -30,20 +30,20 @@ body {
     background:
         radial-gradient(1100px 600px at 15% 10%, #dbeafe 0%, transparent 60%),
         radial-gradient(900px 600px at 90% 0%, #ccfbf1 0%, transparent 55%),
-        var(--bg);
+        #f2f5f9;
     min-height: 100vh;
     padding: 32px 18px 48px;
-    color: var(--ink);
+    color: #0f172a;
 }
 
 /* Main card container. */
 .container {
     max-width: 1080px;
     margin: 0 auto;
-    background: var(--card);
+    background: #ffffff;
     padding: 36px 36px 40px;
     border-radius: 18px;
-    box-shadow: var(--shadow);
+    box-shadow: 0 16px 45px rgba(15, 23, 42, 0.12);
     border: 1px solid rgba(15, 23, 42, 0.08);
 }
 
@@ -68,7 +68,7 @@ body {
 }
 
 .header-text h1 {
-    color: var(--ink);
+    color: #0f172a;
     font-size: 28px;
     margin-bottom: 6px;
     font-weight: 800;
@@ -76,30 +76,30 @@ body {
 }
 
 .header-text p {
-    color: var(--muted);
+    color: #64748b;
     font-size: 14px;
     margin: 0;
 }
 
 /* Date/time panel. */
 .datetime-display {
-    background: var(--soft);
+    background: #f8fafc;
     padding: 16px 18px;
     border-radius: 12px;
     margin-bottom: 22px;
     text-align: center;
-    border: 1px solid var(--line);
+    border: 1px solid #dbe2ea;
 }
 
 .datetime-display .date {
     font-size: 16px;
-    color: var(--ink);
+    color: #0f172a;
     font-weight: 600;
 }
 
 .datetime-display .time {
     font-size: 24px;
-    color: var(--accent);
+    color: #0f766e;
     font-weight: 800;
     margin-top: 5px;
     letter-spacing: 0.3px;
@@ -121,7 +121,7 @@ body {
 label {
     display: block;
     margin-bottom: 8px;
-    color: var(--ink);
+    color: #0f172a;
     font-weight: 600;
     font-size: 14px;
 }
@@ -132,12 +132,18 @@ select,
 textarea {
     width: 100%;
     padding: 12px 14px;
-    border: 1px solid var(--line);
+    border: 1px solid #dbe2ea;
     border-radius: 10px;
     font-size: 14px;
     transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
     background: #ffffff;
-    color: var(--ink);
+    color: #0f172a;
+}
+
+/* Ensure dropdown items remain visible on legacy/high-contrast browser themes. */
+select option {
+    color: #0f172a;
+    background: #ffffff;
 }
 
 .other-input {
@@ -153,7 +159,7 @@ input[type="text"]:focus,
 select:focus,
 textarea:focus {
     outline: none;
-    border-color: var(--accent);
+    border-color: #0f766e;
     box-shadow: 0 0 0 4px rgba(15, 118, 110, 0.14);
 }
 
@@ -179,13 +185,13 @@ button {
 
 /* Primary submit button. */
 .btn-time-in {
-    background: var(--accent);
+    background: #0f766e;
     color: white;
 }
 
 /* Hover effect for submit button. */
 .btn-time-in:hover {
-    background: var(--accent-strong);
+    background: #0b5f59;
     transform: translateY(-2px);
     box-shadow: 0 10px 25px rgba(15, 118, 110, 0.3);
 }
@@ -220,7 +226,7 @@ button {
 
 /* Admin link styling. */
 .admin-link a {
-    color: var(--accent);
+    color: #0f766e;
     text-decoration: none;
     font-size: 14px;
     font-weight: 600;
@@ -232,7 +238,7 @@ button {
 
 /* Required asterisk color. */
 .required {
-    color: var(--error);
+    color: #dc2626;
 }
 
 /* Two-column layout on larger screens. */
