@@ -140,6 +140,12 @@ textarea {
     color: #0f172a;
 }
 
+/* Ensure dropdown items remain visible on legacy/high-contrast browser themes. */
+select option {
+    color: #0f172a;
+    background: #ffffff;
+}
+
 .other-input {
     margin-top: 10px;
 }

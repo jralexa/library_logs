@@ -182,24 +182,28 @@ require __DIR__ . '/includes/partials/document_start.php';
         <!-- Log entry form -->
         <form method="POST" action="" id="logForm" class="form-grid">
             <div class="form-group">
+                <label for="client_type">Client Type <span class="required">*</span></label>
+                <select id="client_type" name="client_type" required>
+                    <option value="" selected disabled>Select a client type</option>
+                    <?php if (!empty($client_types)): ?>
+                        <?php foreach ($client_types as $client_type_option): ?>
+                            <option value="<?php echo h((string)$client_type_option['id']); ?>" data-client-type-code="<?php echo h($client_type_option['code']); ?>">
+                                <?php echo h($client_type_option['label']); ?>
+                            </option>
+                        <?php endforeach; ?>
+                    <?php else: ?>
+                        <option value="" disabled>No client types configured</option>
+                    <?php endif; ?>
+                </select>
+            </div>
+            
+            <div class="form-group">
                 <label for="name">Full Name <span class="required">*</span></label>
                 <select id="name" name="name" required data-other-input="name_other" onchange="toggleOtherInput(this)">
                     <option value="" selected disabled>Select a name</option>
                     <option value="Other">Other</option>
                 </select>
                 <input type="text" id="name_other" name="name_other" class="other-input is-hidden" placeholder="Enter full name">
-            </div>
-            
-            <div class="form-group">
-                <label for="client_type">Visitor Type <span class="required">*</span></label>
-                <select id="client_type" name="client_type" required>
-                    <option value="" selected disabled>Select a client type</option>
-                    <?php foreach ($client_types as $client_type_option): ?>
-                        <option value="<?php echo h((string)$client_type_option['id']); ?>">
-                            <?php echo h($client_type_option['label']); ?>
-                        </option>
-                    <?php endforeach; ?>
-                </select>
             </div>
             
             <div class="form-group">
