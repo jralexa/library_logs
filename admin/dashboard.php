@@ -162,6 +162,8 @@ require __DIR__ . '/../includes/partials/document_start.php';
     <div class="navbar">
         <h1>Library - DepEd Southern Leyte</h1>
         <div class="navbar-right">
+            <a href="dashboard.php" class="btn-nav-link is-active">Dashboard</a>
+            <a href="master_data.php" class="btn-nav-link">Master Data</a>
             <span><?php echo h($_SESSION['username']); ?></span>
             <a href="logout.php" class="btn-logout">Logout</a>
         </div>

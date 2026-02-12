@@ -35,7 +35,7 @@ A simple and efficient library visitor logging system built with native PHP for 
 2. Click the "Import" tab
 3. Click "Choose File" and select `database.sql`
 4. Click "Go"
-5. You should see four tables created: `users`, `districts`, `schools`, and `logbook_entries`
+5. You should see six tables created: `users`, `districts`, `schools`, `client_types`, `personnel`, and `logbook_entries`
 
 ### Step 3: Copy System Files
 1. Locate your XAMPP installation folder (usually `C:\xampp` on Windows)
@@ -48,12 +48,12 @@ A simple and efficient library visitor logging system built with native PHP for 
 2. Go to `http://localhost/library-system`
 3. You should see the Library Log form
 
-### Optional: Load Official District-School Master List
-1. Prepare CSV using `docs/school_master_template.csv` format (`district,school`).
-2. Generate SQL seed file:
-   `php scripts/generate_school_seed.php your_master_list.csv school_seed.sql`
-3. Import `school_seed.sql` in phpMyAdmin (same `library_logs` database).
-4. This upserts districts/schools and is safe to run multiple times.
+### Optional: Rebuild Seeds From New Source Files
+1. Put updated source files in `docs/`:
+   `Database_2025-2026.xlsx` and `List_of_Divisionb_Personnel.docx`.
+2. Regenerate verified CSV masters:
+   use the same extraction workflow used for `docs/verified_district_school_master.csv` and `docs/verified_personnel_master.csv`.
+3. Regenerate SQL seed content into `database.sql` before import.
 
 ## Default Login Credentials
 
@@ -78,10 +78,12 @@ Important: Change the default password immediately after first login for securit
 1. Login: `http://localhost/library-system/admin/login.php`
 2. Enter credentials: `admin` / `admin123`
 3. View the logbook table
-4. Filter logs by date, name, client type, district, school, or organization text
-5. Export data to CSV
-6. Delete incorrect entries
-7. Logout when finished
+4. Open master data management: `http://localhost/library-system/admin/master_data.php`
+5. Maintain client types and personnel lookup data
+6. Filter logs by date, name, client type, district, school, or organization text
+7. Export data to CSV
+8. Delete incorrect entries
+9. Logout when finished
 
 ## Folder Structure
 ```
@@ -126,7 +128,9 @@ htdocs/library-system/
 - `date`: Date of visit
 - `time_in`: Time of visit
 - `name`: Visitor's full name
-- `client_type`: Type of visitor (free text)
+- `personnel_id`: Linked verified personnel record when selected
+- `client_type`: Type of visitor label snapshot
+- `client_type_id`: Linked verified client type
 - `position`: Position or grade level
 - `district_id`: Linked district reference (nullable for non-district organizations)
 - `school_id`: Linked school reference (nullable for non-school organizations)
@@ -144,6 +148,21 @@ htdocs/library-system/
 - `district_id`: Parent district
 - `name`: School name
 - `is_active`: Toggle school visibility in forms
+
+### client_types table
+- `id`: Unique identifier
+- `code`: Stable code (e.g., `division_office_personnel`)
+- `label`: Display label used in forms/logs
+- `is_active`: Toggle client type visibility
+
+### personnel table
+- `id`: Unique identifier
+- `full_name`: Verified personnel name
+- `position_title`: Default position/designation
+- `district_id`: Linked district when applicable
+- `area`: Office/area/school assignment text
+- `client_type_id`: Personnel classification (division or field)
+- `is_active`: Toggle personnel visibility
 
 Note: The system records a single visit entry; there is no time-out field.
 
@@ -187,5 +206,5 @@ This system is developed for DepEd Southern Leyte Division Office use.
 ---
 
 Developed for: Department of Education - Southern Leyte Division
-Version: 2.1
+Version: 2.2
 Last Updated: February 2026

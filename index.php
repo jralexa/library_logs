@@ -10,25 +10,67 @@ require_once __DIR__ . '/includes/bootstrap.php';
 
 $districts = load_districts($conn);
 $schools_by_district = load_schools_by_district($conn);
+$client_types = load_client_types($conn);
+$personnel_by_client_type = load_personnel_by_client_type($conn);
 
 // Handle form submission for new visitor log entries.
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $name = post_value('name');
-    $client_type = post_value('client_type');
+    $name = '';
+    $personnel_id = null;
+    $client_type = '';
+    $client_type_id = 0;
     $position = post_value('position');
     $organization_type = post_value('organization_type');
+    $purpose_choice = post_value('purpose_choice');
     $purpose = post_value('purpose');
     $district_id = null;
     $school_id = null;
     $organization_name = null;
     $organization_valid = false;
 
-    if ($name === 'Other') {
-        $name = post_value('name_other');
+    $client_type_raw = post_value('client_type');
+    if (ctype_digit($client_type_raw)) {
+        $candidate_client_type_id = (int)$client_type_raw;
+        $stmt = $conn->prepare(
+            'SELECT id, label
+             FROM client_types
+             WHERE id = ? AND is_active = 1
+             LIMIT 1'
+        );
+        $stmt->bind_param('i', $candidate_client_type_id);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $row = $result->fetch_assoc();
+        if ($row) {
+            $client_type_id = (int)$row['id'];
+            $client_type = $row['label'];
+        }
+        $stmt->close();
     }
 
-    if ($client_type === 'Other') {
-        $client_type = post_value('client_type_other');
+    $personnel_choice = post_value('name');
+    if ($personnel_choice === 'Other') {
+        $name = post_value('name_other');
+    } elseif ($client_type_id > 0 && ctype_digit($personnel_choice)) {
+        $candidate_personnel_id = (int)$personnel_choice;
+        $stmt = $conn->prepare(
+            'SELECT id, full_name, position_title
+             FROM personnel
+             WHERE id = ? AND client_type_id = ? AND is_active = 1
+             LIMIT 1'
+        );
+        $stmt->bind_param('ii', $candidate_personnel_id, $client_type_id);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $row = $result->fetch_assoc();
+        if ($row) {
+            $personnel_id = (int)$row['id'];
+            $name = $row['full_name'];
+            if ($position === '' && !empty($row['position_title'])) {
+                $position = $row['position_title'];
+            }
+        }
+        $stmt->close();
     }
 
     if ($organization_type === 'district_school') {
@@ -67,23 +109,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $organization_valid = $organization_name !== '';
     }
 
+    if ($purpose === '' && $purpose_choice !== '') {
+        $purpose = $purpose_choice;
+    }
+
     // Require all fields before insert.
-    if ($name && $client_type && $position && $purpose && $organization_valid) {
+    if ($name && $client_type && $client_type_id > 0 && $position && $purpose && $organization_valid) {
         $log_date = date('Y-m-d');
         $current_time = date('H:i:s');
 
         // Persist the log entry using a prepared statement.
         $stmt = $conn->prepare(
             'INSERT INTO logbook_entries (
-                date, time_in, name, client_type, position, district_id, school_id, organization_name, purpose
-             ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)'
+                date, time_in, name, personnel_id, client_type, client_type_id, position, district_id, school_id, organization_name, purpose
+             ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
         );
         $stmt->bind_param(
-            'sssssiiss',
+            'sssisisiiss',
             $log_date,
             $current_time,
             $name,
+            $personnel_id,
             $client_type,
+            $client_type_id,
             $position,
             $district_id,
             $school_id,
@@ -137,11 +185,6 @@ require __DIR__ . '/includes/partials/document_start.php';
                 <label for="name">Full Name <span class="required">*</span></label>
                 <select id="name" name="name" required data-other-input="name_other" onchange="toggleOtherInput(this)">
                     <option value="" selected disabled>Select a name</option>
-                    <option value="Maria Santos">Maria Santos</option>
-                    <option value="Juan Dela Cruz">Juan Dela Cruz</option>
-                    <option value="Ana Reyes">Ana Reyes</option>
-                    <option value="Carlo Mendoza">Carlo Mendoza</option>
-                    <option value="Fatima Lopez">Fatima Lopez</option>
                     <option value="Other">Other</option>
                 </select>
                 <input type="text" id="name_other" name="name_other" class="other-input is-hidden" placeholder="Enter full name">
@@ -149,14 +192,14 @@ require __DIR__ . '/includes/partials/document_start.php';
             
             <div class="form-group">
                 <label for="client_type">Visitor Type <span class="required">*</span></label>
-                <select id="client_type" name="client_type" required data-other-input="client_type_other" onchange="toggleOtherInput(this)">
+                <select id="client_type" name="client_type" required>
                     <option value="" selected disabled>Select a client type</option>
-                     <option value="Field">Field Personnel</option>
-                     <option value="Division">Division Office Staff</option>
-                     <option value="Visitor">External Visitor</option>
-                    <option value="Other">Other</option>
+                    <?php foreach ($client_types as $client_type_option): ?>
+                        <option value="<?php echo h((string)$client_type_option['id']); ?>">
+                            <?php echo h($client_type_option['label']); ?>
+                        </option>
+                    <?php endforeach; ?>
                 </select>
-                <input type="text" id="client_type_other" name="client_type_other" class="other-input is-hidden" placeholder="Enter client type">
             </div>
             
             <div class="form-group">
@@ -197,6 +240,23 @@ require __DIR__ . '/includes/partials/document_start.php';
             </div>
             
             <div class="form-group full">
+                <label for="purpose_choice">Purpose of Visit (Quick Select)</label>
+                <select id="purpose_choice" name="purpose_choice">
+                    <option value="" selected>Choose from common purposes</option>
+                    <option value="To access information, knowledge, and educational resources.">To access information, knowledge, and educational resources.</option>
+                    <option value="To use technology resources (access to computers, internet, and digital resources).">To use technology resources (access to computers, internet, and digital resources).</option>
+                    <option value="To conduct research on reliable and credible sources for in-depth study.">To conduct research on reliable and credible sources for in-depth study.</option>
+                    <option value="To develop reading habits (regular reading for knowledge and enjoyment).">To develop reading habits (regular reading for knowledge and enjoyment).</option>
+                    <option value="To borrow books and access other educational materials for academic purposes.">To borrow books and access other educational materials for academic purposes.</option>
+                    <option value="To return borrowed books and other educational materials.">To return borrowed books and other educational materials.</option>
+                    <option value="For clearance (retirement, maternity leave, travel abroad, medical reasons).">For clearance (retirement, maternity leave, travel abroad, medical reasons).</option>
+                    <option value="To use the library as a venue for conferences, meetings, demonstrations, and other academic or educational activities.">To use the library as a venue for conferences, meetings, demonstrations, and other academic or educational activities.</option>
+                    <option value="To meet with the librarian regarding">To meet with the librarian regarding</option>
+                    <option value="Other">Other (type in textarea)</option>
+                </select>
+            </div>
+
+            <div class="form-group full">
                 <label for="purpose">Purpose of Visit <span class="required">*</span></label>
                 <textarea id="purpose" name="purpose" required placeholder="e.g., Use computer, Visit, Reading books, etc."></textarea>
             </div>
@@ -211,11 +271,17 @@ require __DIR__ . '/includes/partials/document_start.php';
 $inline_script = <<<'HTML'
 <script>
 window.schoolMap = __SCHOOL_MAP__;
+window.personnelMap = __PERSONNEL_MAP__;
 </script>
 HTML;
 $inline_script = str_replace(
     '__SCHOOL_MAP__',
     json_encode($schools_by_district, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT),
+    $inline_script
+);
+$inline_script = str_replace(
+    '__PERSONNEL_MAP__',
+    json_encode($personnel_by_client_type, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT),
     $inline_script
 );
 echo $inline_script;
