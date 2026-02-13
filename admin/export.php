@@ -7,12 +7,16 @@ require_once '../config/session.php';
 requireAdmin();
 
 $filter_date = isset($_GET['filter_date']) ? trim((string)$_GET['filter_date']) : '';
+$filter_month = isset($_GET['filter_month']) ? trim((string)$_GET['filter_month']) : '';
 $filter_name = isset($_GET['filter_name']) ? trim((string)$_GET['filter_name']) : '';
 $filter_client_type = isset($_GET['filter_client_type']) ? trim((string)$_GET['filter_client_type']) : '';
 $filter_district_id = isset($_GET['filter_district_id']) ? trim((string)$_GET['filter_district_id']) : '';
 $filter_school_id = isset($_GET['filter_school_id']) ? trim((string)$_GET['filter_school_id']) : '';
 $filter_organization = isset($_GET['filter_organization']) ? trim((string)$_GET['filter_organization']) : '';
 
+if ($filter_month !== '' && !preg_match('/^\d{4}\-(0[1-9]|1[0-2])$/', $filter_month)) {
+    $filter_month = '';
+}
 if ($filter_district_id !== '' && !ctype_digit($filter_district_id)) {
     $filter_district_id = '';
 }
@@ -33,6 +37,10 @@ $types = '';
 if ($filter_date !== '') {
     $query .= ' AND le.date = ?';
     $params[] = $filter_date;
+    $types .= 's';
+} elseif ($filter_month !== '') {
+    $query .= ' AND DATE_FORMAT(le.date, "%Y-%m") = ?';
+    $params[] = $filter_month;
     $types .= 's';
 }
 

@@ -57,12 +57,16 @@ foreach ($schools_by_district as $district_id => $district_schools) {
 
 // Read filter inputs.
 $filter_date = get_value('filter_date');
+$filter_month = get_value('filter_month');
 $filter_name = get_value('filter_name');
 $filter_client_type = get_value('filter_client_type');
 $filter_district_id = get_value('filter_district_id');
 $filter_school_id = get_value('filter_school_id');
 $filter_organization = get_value('filter_organization');
 
+if ($filter_month !== '' && !preg_match('/^\d{4}\-(0[1-9]|1[0-2])$/', $filter_month)) {
+    $filter_month = '';
+}
 if ($filter_district_id !== '' && !ctype_digit($filter_district_id)) {
     $filter_district_id = '';
 }
@@ -78,6 +82,10 @@ $types = '';
 if ($filter_date !== '') {
     $where .= ' AND le.date = ?';
     $params[] = $filter_date;
+    $types .= 's';
+} elseif ($filter_month !== '') {
+    $where .= ' AND DATE_FORMAT(le.date, "%Y-%m") = ?';
+    $params[] = $filter_month;
     $types .= 's';
 }
 
@@ -181,6 +189,10 @@ require __DIR__ . '/../includes/partials/document_start.php';
                         <div class="filter-group">
                             <label for="filter_date">Date</label>
                             <input type="date" id="filter_date" name="filter_date" value="<?php echo h($filter_date); ?>">
+                        </div>
+                        <div class="filter-group">
+                            <label for="filter_month">Month</label>
+                            <input type="month" id="filter_month" name="filter_month" value="<?php echo h($filter_month); ?>">
                         </div>
 
                         <div class="filter-group">
