@@ -164,7 +164,9 @@ require __DIR__ . '/includes/partials/document_start.php';
     <div class="container">
         <!-- Header with logo and text -->
         <div class="header">
-            <img src="images/deped.jpg" alt="DepEd Logo" class="logo">
+            <a href="admin/login.php" aria-label="Admin Login">
+                <img src="images/deped.jpg" alt="DepEd Logo" class="logo">
+            </a>
             <div class="header-text">
                 <h1>DepEd Southern Leyte Division Library</h1>
                 <p>Library Visitor Log System</p>
