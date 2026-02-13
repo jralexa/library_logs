@@ -331,6 +331,11 @@ $school_page_raw = get_value('school_page');
 $school_page = ($school_page_raw !== '' && ctype_digit($school_page_raw)) ? max(1, (int)$school_page_raw) : 1;
 $school_page_size = 30;
 
+$personnel_q = get_value('personnel_q');
+$personnel_page_raw = get_value('personnel_page');
+$personnel_page = ($personnel_page_raw !== '' && ctype_digit($personnel_page_raw)) ? max(1, (int)$personnel_page_raw) : 1;
+$personnel_page_size = 30;
+
 $district_options = [];
 $result = $conn->query(
     'SELECT id, name, is_active
@@ -483,21 +488,70 @@ if ($result instanceof mysqli_result) {
 }
 
 $personnel_rows = [];
-$result = $conn->query(
+$personnel_where = ' WHERE 1=1';
+$personnel_params = [];
+$personnel_types = '';
+
+if ($personnel_q !== '') {
+    $personnel_where .= ' AND (
+        p.full_name LIKE ?
+        OR p.position_title LIKE ?
+        OR p.area LIKE ?
+        OR ct.label LIKE ?
+        OR d.name LIKE ?
+    )';
+    $personnel_like = '%' . $personnel_q . '%';
+    $personnel_params[] = $personnel_like;
+    $personnel_params[] = $personnel_like;
+    $personnel_params[] = $personnel_like;
+    $personnel_params[] = $personnel_like;
+    $personnel_params[] = $personnel_like;
+    $personnel_types .= 'sssss';
+}
+
+$personnel_count_query =
+    'SELECT COUNT(*) AS total
+     FROM personnel p
+     INNER JOIN client_types ct ON ct.id = p.client_type_id
+     LEFT JOIN districts d ON d.id = p.district_id' .
+    $personnel_where;
+$personnel_count_stmt = $conn->prepare($personnel_count_query);
+if (!empty($personnel_params)) {
+    $personnel_count_stmt->bind_param($personnel_types, ...$personnel_params);
+}
+$personnel_count_stmt->execute();
+$personnel_count_result = $personnel_count_stmt->get_result();
+$personnel_total_rows = (int)$personnel_count_result->fetch_assoc()['total'];
+$personnel_count_stmt->close();
+
+$personnel_total_pages = max(1, (int)ceil($personnel_total_rows / $personnel_page_size));
+$personnel_page = min($personnel_page, $personnel_total_pages);
+$personnel_offset = ($personnel_page - 1) * $personnel_page_size;
+
+$personnel_query =
     'SELECT p.id, p.full_name, p.position_title, p.area, p.is_active,
             p.client_type_id, ct.label AS client_type_label, p.district_id, d.name AS district_name
      FROM personnel p
      INNER JOIN client_types ct ON ct.id = p.client_type_id
-     LEFT JOIN districts d ON d.id = p.district_id
-     ORDER BY p.full_name ASC
-     LIMIT 800'
-);
-if ($result instanceof mysqli_result) {
-    while ($row = $result->fetch_assoc()) {
+     LEFT JOIN districts d ON d.id = p.district_id' .
+    $personnel_where .
+    ' ORDER BY p.full_name ASC
+      LIMIT ? OFFSET ?';
+$personnel_params_with_page = $personnel_params;
+$personnel_types_with_page = $personnel_types . 'ii';
+$personnel_params_with_page[] = $personnel_page_size;
+$personnel_params_with_page[] = $personnel_offset;
+
+$personnel_stmt = $conn->prepare($personnel_query);
+$personnel_stmt->bind_param($personnel_types_with_page, ...$personnel_params_with_page);
+$personnel_stmt->execute();
+$personnel_result = $personnel_stmt->get_result();
+if ($personnel_result instanceof mysqli_result) {
+    while ($row = $personnel_result->fetch_assoc()) {
         $personnel_rows[] = $row;
     }
-    $result->free();
 }
+$personnel_stmt->close();
 
 $page_title = 'Master Data Management';
 $styles = ['../css/admin.css'];
@@ -837,7 +891,7 @@ require __DIR__ . '/../includes/partials/document_start.php';
 
         <div class="card tab-panel" id="tab-panel-personnel" data-tab-panel="personnel" role="tabpanel" aria-labelledby="tab-btn-personnel" hidden>
             <div class="card-header">
-                <h2>Personnel</h2>
+                <h2>Personnel (<?php echo number_format($personnel_total_rows); ?>)</h2>
                 <form method="POST" action="" class="inline-form-grid inline-form-grid-personnel">
                     <input type="hidden" name="action" value="add_personnel">
                     <div class="filter-group">
@@ -880,6 +934,18 @@ require __DIR__ . '/../includes/partials/document_start.php';
                     </div>
                     <div class="filter-group align-end">
                         <button type="submit" class="btn btn-primary">Add Personnel</button>
+                    </div>
+                </form>
+                <form method="GET" action="master_data.php#tab-personnel" class="filters filters-master">
+                    <div class="filter-group">
+                        <label for="personnel_q">Search Personnel</label>
+                        <input id="personnel_q" type="text" name="personnel_q" value="<?php echo h($personnel_q); ?>" placeholder="Name, position, area, district, type">
+                    </div>
+                    <div class="filter-group align-end">
+                        <div class="filter-actions">
+                            <button type="submit" class="btn btn-primary">Filter</button>
+                            <a href="master_data.php?<?php echo h(build_master_query([], ['personnel_q', 'personnel_page'])); ?>#tab-personnel" class="btn btn-secondary">Clear</a>
+                        </div>
                     </div>
                 </form>
             </div>
@@ -948,6 +1014,32 @@ require __DIR__ . '/../includes/partials/document_start.php';
                     </tbody>
                 </table>
             </div>
+            <?php if ($personnel_total_rows > 0): ?>
+                <div class="pagination">
+                    <div class="pagination-info">
+                        Showing <?php echo number_format($personnel_offset + 1); ?>&ndash;<?php echo number_format(min($personnel_offset + $personnel_page_size, $personnel_total_rows)); ?> of <?php echo number_format($personnel_total_rows); ?>
+                    </div>
+                    <div class="pagination-links">
+                        <?php if ($personnel_page > 1): ?>
+                            <a href="master_data.php?<?php echo h(build_master_query(['personnel_page' => $personnel_page - 1], [])); ?>#tab-personnel">&larr; Prev</a>
+                        <?php endif; ?>
+                        <?php
+                        $personnel_start_page = max(1, $personnel_page - 2);
+                        $personnel_end_page = min($personnel_total_pages, $personnel_page + 2);
+                        for ($p = $personnel_start_page; $p <= $personnel_end_page; $p++):
+                        ?>
+                            <?php if ($p === $personnel_page): ?>
+                                <span class="current"><?php echo $p; ?></span>
+                            <?php else: ?>
+                                <a href="master_data.php?<?php echo h(build_master_query(['personnel_page' => $p], [])); ?>#tab-personnel"><?php echo $p; ?></a>
+                            <?php endif; ?>
+                        <?php endfor; ?>
+                        <?php if ($personnel_page < $personnel_total_pages): ?>
+                            <a href="master_data.php?<?php echo h(build_master_query(['personnel_page' => $personnel_page + 1], [])); ?>#tab-personnel">Next &rarr;</a>
+                        <?php endif; ?>
+                    </div>
+                </div>
+            <?php endif; ?>
         </div>
     </div>
 <?php
