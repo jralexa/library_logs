@@ -36,6 +36,11 @@ In `Master Data` page, admin can add/edit/activate/deactivate:
 - Client Types
 - Personnel
 
+Master Data UX updates:
+- Tabbed sections (Districts, Schools, Client Types, Personnel)
+- Add/update actions save without full page refresh
+- Floating toast messages + button save states (`Saving...` -> `Saved`)
+
 ## IMPORTANT FILES
 ```text
 library_logs/
@@ -62,8 +67,11 @@ library_logs/
 |       |-- document_start.php
 |       |-- document_end.php
 |       `-- flash.php
+|-- images/
+|   `-- deped.jpg
 |-- js/
-|   `-- main.js
+|   |-- main.js
+|   `-- master_data.js
 `-- scripts/
     `-- generate_school_seed.php
 ```
@@ -72,3 +80,4 @@ library_logs/
 - "Cannot connect to DB": Start MySQL and verify `config/database.php`
 - "Page not found": Check folder name in URL
 - "Cannot login": Import `database.sql` first
+- "Master Data changes not using tabs/toasts": hard refresh browser (`Ctrl+F5`)

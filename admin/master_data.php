@@ -60,27 +60,53 @@ function build_master_query(array $overrides = [], array $remove = []): string
     return http_build_query($query);
 }
 
+function is_ajax_request(): bool
+{
+    $requested_with = $_SERVER['HTTP_X_REQUESTED_WITH'] ?? '';
+    if (strtolower($requested_with) === 'xmlhttprequest') {
+        return true;
+    }
+
+    return post_value('ajax') === '1';
+}
+
+function respond_master_post(string $message, string $type, bool $as_json): void
+{
+    if ($as_json) {
+        header('Content-Type: application/json; charset=UTF-8');
+        echo json_encode([
+            'ok' => $type === 'success',
+            'type' => $type,
+            'message' => $message,
+        ]);
+        exit;
+    }
+
+    set_flash($message, $type);
+    redirect_to('master_data.php');
+}
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $action = post_value('action');
+    $is_ajax = is_ajax_request();
 
     if ($action === 'add_district') {
         $name = post_value('name');
         $is_active = normalize_status(post_value('is_active'));
 
         if ($name === '') {
-            set_flash('District name is required.', 'error');
-            redirect_to('master_data.php');
+            respond_master_post('District name is required.', 'error', $is_ajax);
         }
 
         $stmt = $conn->prepare('INSERT INTO districts (name, is_active) VALUES (?, ?)');
         $stmt->bind_param('si', $name, $is_active);
-        if ($stmt->execute()) {
-            set_flash('District added.', 'success');
-        } else {
-            set_flash('Unable to add district (name may already exist).', 'error');
-        }
+        $added = $stmt->execute();
         $stmt->close();
-        redirect_to('master_data.php');
+        respond_master_post(
+            $added ? 'District added.' : 'Unable to add district (name may already exist).',
+            $added ? 'success' : 'error',
+            $is_ajax
+        );
     }
 
     if ($action === 'update_district') {
@@ -89,8 +115,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $is_active = normalize_status(post_value('is_active'));
 
         if ($district_id === null || $name === '') {
-            set_flash('Invalid district update payload.', 'error');
-            redirect_to('master_data.php');
+            respond_master_post('Invalid district update payload.', 'error', $is_ajax);
         }
 
         $stmt = $conn->prepare(
@@ -99,13 +124,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
              WHERE id = ?'
         );
         $stmt->bind_param('sii', $name, $is_active, $district_id);
-        if ($stmt->execute()) {
-            set_flash('District updated.', 'success');
-        } else {
-            set_flash('Unable to update district.', 'error');
-        }
+        $updated = $stmt->execute();
         $stmt->close();
-        redirect_to('master_data.php');
+        respond_master_post(
+            $updated ? 'District updated.' : 'Unable to update district.',
+            $updated ? 'success' : 'error',
+            $is_ajax
+        );
     }
 
     if ($action === 'add_school') {
@@ -114,19 +139,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $is_active = normalize_status(post_value('is_active'));
 
         if ($district_id === null || $name === '' || !district_exists($conn, $district_id)) {
-            set_flash('Invalid school input.', 'error');
-            redirect_to('master_data.php');
+            respond_master_post('Invalid school input.', 'error', $is_ajax);
         }
 
         $stmt = $conn->prepare('INSERT INTO schools (district_id, name, is_active) VALUES (?, ?, ?)');
         $stmt->bind_param('isi', $district_id, $name, $is_active);
-        if ($stmt->execute()) {
-            set_flash('School added.', 'success');
-        } else {
-            set_flash('Unable to add school (district+school may already exist).', 'error');
-        }
+        $added = $stmt->execute();
         $stmt->close();
-        redirect_to('master_data.php');
+        respond_master_post(
+            $added ? 'School added.' : 'Unable to add school (district+school may already exist).',
+            $added ? 'success' : 'error',
+            $is_ajax
+        );
     }
 
     if ($action === 'update_school') {
@@ -141,8 +165,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $name === '' ||
             !district_exists($conn, $district_id)
         ) {
-            set_flash('Invalid school update payload.', 'error');
-            redirect_to('master_data.php');
+            respond_master_post('Invalid school update payload.', 'error', $is_ajax);
         }
 
         $stmt = $conn->prepare(
@@ -153,13 +176,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
              WHERE id = ?'
         );
         $stmt->bind_param('isii', $district_id, $name, $is_active, $school_id);
-        if ($stmt->execute()) {
-            set_flash('School updated.', 'success');
-        } else {
-            set_flash('Unable to update school.', 'error');
-        }
+        $updated = $stmt->execute();
         $stmt->close();
-        redirect_to('master_data.php');
+        respond_master_post(
+            $updated ? 'School updated.' : 'Unable to update school.',
+            $updated ? 'success' : 'error',
+            $is_ajax
+        );
     }
 
     if ($action === 'add_client_type') {
@@ -168,21 +191,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $is_active = normalize_status(post_value('is_active'));
 
         if (!is_valid_client_type_code($code) || $label === '') {
-            set_flash('Invalid client type input.', 'error');
-            redirect_to('master_data.php');
+            respond_master_post('Invalid client type input.', 'error', $is_ajax);
         }
 
         $stmt = $conn->prepare(
             'INSERT INTO client_types (code, label, is_active) VALUES (?, ?, ?)'
         );
         $stmt->bind_param('ssi', $code, $label, $is_active);
-        if ($stmt->execute()) {
-            set_flash('Client type added.', 'success');
-        } else {
-            set_flash('Unable to add client type (code/label may already exist).', 'error');
-        }
+        $added = $stmt->execute();
         $stmt->close();
-        redirect_to('master_data.php');
+        respond_master_post(
+            $added ? 'Client type added.' : 'Unable to add client type (code/label may already exist).',
+            $added ? 'success' : 'error',
+            $is_ajax
+        );
     }
 
     if ($action === 'update_client_type') {
@@ -192,8 +214,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $is_active = normalize_status(post_value('is_active'));
 
         if ($client_type_id === null || !is_valid_client_type_code($code) || $label === '') {
-            set_flash('Invalid client type update payload.', 'error');
-            redirect_to('master_data.php');
+            respond_master_post('Invalid client type update payload.', 'error', $is_ajax);
         }
 
         $stmt = $conn->prepare(
@@ -202,13 +223,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
              WHERE id = ?'
         );
         $stmt->bind_param('ssii', $code, $label, $is_active, $client_type_id);
-        if ($stmt->execute()) {
-            set_flash('Client type updated.', 'success');
-        } else {
-            set_flash('Unable to update client type.', 'error');
-        }
+        $updated = $stmt->execute();
         $stmt->close();
-        redirect_to('master_data.php');
+        respond_master_post(
+            $updated ? 'Client type updated.' : 'Unable to update client type.',
+            $updated ? 'success' : 'error',
+            $is_ajax
+        );
     }
 
     if ($action === 'add_personnel') {
@@ -220,13 +241,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $is_active = normalize_status(post_value('is_active'));
 
         if ($full_name === '' || $client_type_id === null) {
-            set_flash('Invalid personnel input.', 'error');
-            redirect_to('master_data.php');
+            respond_master_post('Invalid personnel input.', 'error', $is_ajax);
         }
 
         if ($district_id !== null && !district_exists($conn, $district_id)) {
-            set_flash('Invalid district selection.', 'error');
-            redirect_to('master_data.php');
+            respond_master_post('Invalid district selection.', 'error', $is_ajax);
         }
 
         $stmt = $conn->prepare(
@@ -234,13 +253,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
              VALUES (?, NULLIF(?, \'\'), ?, NULLIF(?, \'\'), ?, ?)'
         );
         $stmt->bind_param('ssisii', $full_name, $position_title, $district_id, $area, $client_type_id, $is_active);
-        if ($stmt->execute()) {
-            set_flash('Personnel added.', 'success');
-        } else {
-            set_flash('Unable to add personnel (name+client type may already exist).', 'error');
-        }
+        $added = $stmt->execute();
         $stmt->close();
-        redirect_to('master_data.php');
+        respond_master_post(
+            $added ? 'Personnel added.' : 'Unable to add personnel (name+client type may already exist).',
+            $added ? 'success' : 'error',
+            $is_ajax
+        );
     }
 
     if ($action === 'update_personnel') {
@@ -253,13 +272,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $is_active = normalize_status(post_value('is_active'));
 
         if ($personnel_id === null || $full_name === '' || $client_type_id === null) {
-            set_flash('Invalid personnel update payload.', 'error');
-            redirect_to('master_data.php');
+            respond_master_post('Invalid personnel update payload.', 'error', $is_ajax);
         }
 
         if ($district_id !== null && !district_exists($conn, $district_id)) {
-            set_flash('Invalid district selection.', 'error');
-            redirect_to('master_data.php');
+            respond_master_post('Invalid district selection.', 'error', $is_ajax);
         }
 
         $stmt = $conn->prepare(
@@ -282,13 +299,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $is_active,
             $personnel_id
         );
-        if ($stmt->execute()) {
-            set_flash('Personnel updated.', 'success');
-        } else {
-            set_flash('Unable to update personnel.', 'error');
-        }
+        $updated = $stmt->execute();
         $stmt->close();
-        redirect_to('master_data.php');
+        respond_master_post(
+            $updated ? 'Personnel updated.' : 'Unable to update personnel.',
+            $updated ? 'success' : 'error',
+            $is_ajax
+        );
     }
 }
 
@@ -484,6 +501,8 @@ if ($result instanceof mysqli_result) {
 
 $page_title = 'Master Data Management';
 $styles = ['../css/admin.css'];
+$master_data_js_version = (string)filemtime(__DIR__ . '/../js/master_data.js');
+$scripts = ['../js/master_data.js?v=' . $master_data_js_version];
 require __DIR__ . '/../includes/partials/document_start.php';
 ?>
     <div class="navbar">
@@ -499,7 +518,14 @@ require __DIR__ . '/../includes/partials/document_start.php';
     <div class="container">
         <?php require __DIR__ . '/../includes/partials/flash.php'; ?>
 
-        <div class="card mb-16">
+        <div class="master-tabs" role="tablist" aria-label="Master data sections">
+            <button type="button" class="master-tab is-active" id="tab-btn-districts" data-tab-target="districts" role="tab" aria-controls="tab-panel-districts" aria-selected="true">Districts</button>
+            <button type="button" class="master-tab" id="tab-btn-schools" data-tab-target="schools" role="tab" aria-controls="tab-panel-schools" aria-selected="false">Schools</button>
+            <button type="button" class="master-tab" id="tab-btn-client-types" data-tab-target="client-types" role="tab" aria-controls="tab-panel-client-types" aria-selected="false">Client Types</button>
+            <button type="button" class="master-tab" id="tab-btn-personnel" data-tab-target="personnel" role="tab" aria-controls="tab-panel-personnel" aria-selected="false">Personnel</button>
+        </div>
+
+        <div class="card mb-16 tab-panel is-active" id="tab-panel-districts" data-tab-panel="districts" role="tabpanel" aria-labelledby="tab-btn-districts">
             <div class="card-header">
                 <h2>Districts (<?php echo number_format($district_total_rows); ?>)</h2>
                 <form method="POST" action="" class="inline-form-grid">
@@ -606,7 +632,7 @@ require __DIR__ . '/../includes/partials/document_start.php';
             <?php endif; ?>
         </div>
 
-        <div class="card mb-16">
+        <div class="card mb-16 tab-panel" id="tab-panel-schools" data-tab-panel="schools" role="tabpanel" aria-labelledby="tab-btn-schools" hidden>
             <div class="card-header">
                 <h2>Schools (<?php echo number_format($school_total_rows); ?>)</h2>
                 <form method="POST" action="" class="inline-form-grid">
@@ -744,7 +770,7 @@ require __DIR__ . '/../includes/partials/document_start.php';
             <?php endif; ?>
         </div>
 
-        <div class="card mb-16">
+        <div class="card mb-16 tab-panel" id="tab-panel-client-types" data-tab-panel="client-types" role="tabpanel" aria-labelledby="tab-btn-client-types" hidden>
             <div class="card-header">
                 <h2>Client Types</h2>
                 <form method="POST" action="" class="inline-form-grid">
@@ -809,7 +835,7 @@ require __DIR__ . '/../includes/partials/document_start.php';
             </div>
         </div>
 
-        <div class="card">
+        <div class="card tab-panel" id="tab-panel-personnel" data-tab-panel="personnel" role="tabpanel" aria-labelledby="tab-btn-personnel" hidden>
             <div class="card-header">
                 <h2>Personnel</h2>
                 <form method="POST" action="" class="inline-form-grid inline-form-grid-personnel">

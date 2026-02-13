@@ -19,6 +19,9 @@ A compact, modern library visitor logging system built with native PHP + MySQL.
   - Schools (add, edit, reassign district, activate/deactivate)
   - Client Types (add, edit, activate/deactivate)
   - Personnel (add, edit, activate/deactivate)
+- Tabbed Master Data sections (Districts, Schools, Client Types, Personnel)
+- No-refresh master data add/update (AJAX submit)
+- Floating toast feedback and save-state button indicators (`Saving...` -> `Saved`)
 - Compact SaaS-style UI for high-density data editing
 
 ## Requirements
@@ -74,8 +77,9 @@ Change this password after first login.
 ### Admin Flow
 1. Login via `/admin/login.php`
 2. Review entries in dashboard (`/admin/dashboard.php`)
-3. Manage master data in `/admin/master_data.php`
-4. Export CSV as needed
+3. Manage master data in `/admin/master_data.php` using tabs
+4. Add/update records without full page refresh (toast confirms result)
+5. Export CSV as needed
 
 ## Project Structure
 
@@ -104,8 +108,11 @@ library_logs/
 |       |-- document_start.php
 |       |-- document_end.php
 |       `-- flash.php
+|-- images/
+|   `-- deped.jpg
 |-- js/
-|   `-- main.js
+|   |-- main.js
+|   `-- master_data.js
 `-- scripts/
     `-- generate_school_seed.php
 ```
@@ -115,6 +122,7 @@ library_logs/
 - `logbook_entries` stores `time_in` only (no timeout field).
 - Form dropdown values come from active master data records.
 - District/School validation is enforced server-side on submit.
+- If browser shows old master-data behavior, do a hard refresh (`Ctrl+F5`) to load latest JS/CSS.
 
 ## Troubleshooting
 
@@ -134,5 +142,5 @@ library_logs/
 
 ## Version
 
-- Version: 2.3
+- Version: 2.4
 - Updated: February 2026
