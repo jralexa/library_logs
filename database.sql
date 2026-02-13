@@ -137,11 +137,7 @@ FROM districts d
 JOIN (
     SELECT 'Anahawan' AS district_name, 'Amagusan ES' AS school_name
     UNION ALL
-    SELECT 'Anahawan' AS district_name, 'Anahawan Central School' AS school_name
-    UNION ALL
     SELECT 'Anahawan' AS district_name, 'Anahawan CS' AS school_name
-    UNION ALL
-    SELECT 'Anahawan' AS district_name, 'Anahawan NVHS' AS school_name
     UNION ALL
     SELECT 'Anahawan' AS district_name, 'Calinta-an MGES' AS school_name
     UNION ALL
@@ -159,17 +155,11 @@ JOIN (
     UNION ALL
     SELECT 'Bontoc 1' AS district_name, 'Beniton Integrated School' AS school_name
     UNION ALL
-    SELECT 'Bontoc 1' AS district_name, 'Beniton IS' AS school_name
-    UNION ALL
     SELECT 'Bontoc 1' AS district_name, 'Bontoc CS' AS school_name
-    UNION ALL
-    SELECT 'Bontoc 1' AS district_name, 'Bontoc National High School' AS school_name
     UNION ALL
     SELECT 'Bontoc 1' AS district_name, 'Bontoc NHS' AS school_name
     UNION ALL
     SELECT 'Bontoc 1' AS district_name, 'Casao MGES' AS school_name
-    UNION ALL
-    SELECT 'Bontoc 1' AS district_name, 'Esperanza ES' AS school_name
     UNION ALL
     SELECT 'Bontoc 1' AS district_name, 'Guinsangaan MGES' AS school_name
     UNION ALL
@@ -183,8 +173,6 @@ JOIN (
     UNION ALL
     SELECT 'Bontoc 1' AS district_name, 'Hitawos IS' AS school_name
     UNION ALL
-    SELECT 'Bontoc 1' AS district_name, 'Lawgawan PS' AS school_name
-    UNION ALL
     SELECT 'Bontoc 1' AS district_name, 'Malbago MGES' AS school_name
     UNION ALL
     SELECT 'Bontoc 1' AS district_name, 'Olisihan MGES' AS school_name
@@ -193,11 +181,7 @@ JOIN (
     UNION ALL
     SELECT 'Bontoc 1' AS district_name, 'Pangi MGES' AS school_name
     UNION ALL
-    SELECT 'Bontoc 1' AS district_name, 'Sta. Cruz ES' AS school_name
-    UNION ALL
     SELECT 'Bontoc 1' AS district_name, 'Taa ES' AS school_name
-    UNION ALL
-    SELECT 'Bontoc 2' AS district_name, 'Anahao PS' AS school_name
     UNION ALL
     SELECT 'Bontoc 2' AS district_name, 'Buenavista IS' AS school_name
     UNION ALL
@@ -215,8 +199,6 @@ JOIN (
     UNION ALL
     SELECT 'Bontoc 2' AS district_name, 'Lanao MGES' AS school_name
     UNION ALL
-    SELECT 'Bontoc 2' AS district_name, 'Mahayahay ES' AS school_name
-    UNION ALL
     SELECT 'Bontoc 2' AS district_name, 'Mauylab MGES' AS school_name
     UNION ALL
     SELECT 'Bontoc 2' AS district_name, 'Paku ES' AS school_name
@@ -225,11 +207,7 @@ JOIN (
     UNION ALL
     SELECT 'Bontoc 2' AS district_name, 'Pamahawan MGES' AS school_name
     UNION ALL
-    SELECT 'Bontoc 2' AS district_name, 'Sampongon Elementary School' AS school_name
-    UNION ALL
     SELECT 'Bontoc 2' AS district_name, 'Sampongon ES' AS school_name
-    UNION ALL
-    SELECT 'Bontoc 2' AS district_name, 'San Vicente PS' AS school_name
     UNION ALL
     SELECT 'Bontoc 2' AS district_name, 'Union ES' AS school_name
     UNION ALL
@@ -279,8 +257,6 @@ JOIN (
     UNION ALL
     SELECT 'Hinunangan' AS district_name, 'Nava ES' AS school_name
     UNION ALL
-    SELECT 'Hinunangan' AS district_name, 'Nava National High School' AS school_name
-    UNION ALL
     SELECT 'Hinunangan' AS district_name, 'Nava NHS' AS school_name
     UNION ALL
     SELECT 'Hinunangan' AS district_name, 'Nueva Esperanza ES' AS school_name
@@ -303,6 +279,8 @@ JOIN (
     UNION ALL
     SELECT 'Hinunangan' AS district_name, 'Sto. Nino NHS' AS school_name
     UNION ALL
+    SELECT 'Hinunangan' AS district_name, 'Sto. NiÃ±o NHS' AS school_name
+    UNION ALL
     SELECT 'Hinunangan' AS district_name, 'Tahusan ES' AS school_name
     UNION ALL
     SELECT 'Hinunangan' AS district_name, 'Tawog PS' AS school_name
@@ -311,17 +289,11 @@ JOIN (
     UNION ALL
     SELECT 'Hinundayan' AS district_name, 'Amaga ES' AS school_name
     UNION ALL
-    SELECT 'Hinundayan' AS district_name, 'Amaga MG Elementary School' AS school_name
-    UNION ALL
     SELECT 'Hinundayan' AS district_name, 'Ambao ES' AS school_name
     UNION ALL
     SELECT 'Hinundayan' AS district_name, 'An-An MGES' AS school_name
     UNION ALL
     SELECT 'Hinundayan' AS district_name, 'Baculod MGES' AS school_name
-    UNION ALL
-    SELECT 'Hinundayan' AS district_name, 'Biasong MGES' AS school_name
-    UNION ALL
-    SELECT 'Hinundayan' AS district_name, 'Bugho ES' AS school_name
     UNION ALL
     SELECT 'Hinundayan' AS district_name, 'Cabulisan MGES' AS school_name
     UNION ALL
@@ -336,8 +308,6 @@ JOIN (
     SELECT 'Hinundayan' AS district_name, 'Hubasan ES' AS school_name
     UNION ALL
     SELECT 'Hinundayan' AS district_name, 'Lungsodaan ES' AS school_name
-    UNION ALL
-    SELECT 'Hinundayan' AS district_name, 'Lungsodaan NHS' AS school_name
     UNION ALL
     SELECT 'Hinundayan' AS district_name, 'Navalita MGES' AS school_name
     UNION ALL
@@ -359,8 +329,6 @@ JOIN (
     UNION ALL
     SELECT 'Libagon' AS district_name, 'Nahulid ES' AS school_name
     UNION ALL
-    SELECT 'Libagon' AS district_name, 'Otikon Elementary School' AS school_name
-    UNION ALL
     SELECT 'Libagon' AS district_name, 'Otikon ES' AS school_name
     UNION ALL
     SELECT 'Libagon' AS district_name, 'RMSMNHS' AS school_name
@@ -368,8 +336,6 @@ JOIN (
     SELECT 'Libagon' AS district_name, 'Tigbao ES' AS school_name
     UNION ALL
     SELECT 'Liloan' AS district_name, 'Amaga ES' AS school_name
-    UNION ALL
-    SELECT 'Liloan' AS district_name, 'Anilao Elementary School' AS school_name
     UNION ALL
     SELECT 'Liloan' AS district_name, 'Anilao ES' AS school_name
     UNION ALL
@@ -384,8 +350,6 @@ JOIN (
     SELECT 'Liloan' AS district_name, 'Candayuman ES' AS school_name
     UNION ALL
     SELECT 'Liloan' AS district_name, 'CATIG ES' AS school_name
-    UNION ALL
-    SELECT 'Liloan' AS district_name, 'Catig ES' AS school_name
     UNION ALL
     SELECT 'Liloan' AS district_name, 'Estela ES' AS school_name
     UNION ALL
@@ -422,8 +386,6 @@ JOIN (
     SELECT 'Liloan' AS district_name, 'San Roque ES' AS school_name
     UNION ALL
     SELECT 'Liloan' AS district_name, 'Tabugon ES' AS school_name
-    UNION ALL
-    SELECT 'Limasawa' AS district_name, 'Limasawa National High School' AS school_name
     UNION ALL
     SELECT 'Limasawa' AS district_name, 'Limasawa NHS' AS school_name
     UNION ALL
@@ -471,27 +433,17 @@ JOIN (
     UNION ALL
     SELECT 'Macrohon' AS district_name, 'San Isidro ES' AS school_name
     UNION ALL
-    SELECT 'Macrohon' AS district_name, 'San Joaquin ES' AS school_name
-    UNION ALL
-    SELECT 'Macrohon' AS district_name, 'San Roque Elementary School' AS school_name
-    UNION ALL
     SELECT 'Macrohon' AS district_name, 'San Roque ES' AS school_name
-    UNION ALL
-    SELECT 'Macrohon' AS district_name, 'San Roque NHS' AS school_name
     UNION ALL
     SELECT 'Macrohon' AS district_name, 'Sindangan ES' AS school_name
     UNION ALL
-    SELECT 'Macrohon' AS district_name, 'Sto. Nino ES' AS school_name
+    SELECT 'Macrohon' AS district_name, 'Sto. NiÃ±o ES' AS school_name
     UNION ALL
     SELECT 'Macrohon' AS district_name, 'Villa Jacinta ES' AS school_name
     UNION ALL
     SELECT 'Macrohon' AS district_name, 'Villa Jacinta NVHS' AS school_name
     UNION ALL
     SELECT 'Malitbog' AS district_name, 'Abgao ES' AS school_name
-    UNION ALL
-    SELECT 'Malitbog' AS district_name, 'Aurora ES' AS school_name
-    UNION ALL
-    SELECT 'Malitbog' AS district_name, 'Benit Elementary School' AS school_name
     UNION ALL
     SELECT 'Malitbog' AS district_name, 'Benit ES' AS school_name
     UNION ALL
@@ -523,11 +475,11 @@ JOIN (
     UNION ALL
     SELECT 'Malitbog' AS district_name, 'Maningning ES' AS school_name
     UNION ALL
+    SELECT 'Malitbog' AS district_name, 'Sangahon ES' AS school_name
+    UNION ALL
     SELECT 'Malitbog' AS district_name, 'San Jose ES' AS school_name
     UNION ALL
     SELECT 'Malitbog' AS district_name, 'San Vicente ES' AS school_name
-    UNION ALL
-    SELECT 'Malitbog' AS district_name, 'Sangahon ES' AS school_name
     UNION ALL
     SELECT 'Malitbog' AS district_name, 'Sta. Cruz ES' AS school_name
     UNION ALL
@@ -549,8 +501,6 @@ JOIN (
     UNION ALL
     SELECT 'Padre Burgos' AS district_name, 'Lungsodaan ES' AS school_name
     UNION ALL
-    SELECT 'Padre Burgos' AS district_name, 'Padre Burgos Central School' AS school_name
-    UNION ALL
     SELECT 'Padre Burgos' AS district_name, 'Padre Burgos CS' AS school_name
     UNION ALL
     SELECT 'Padre Burgos' AS district_name, 'Padre Burgos NTVHS' AS school_name
@@ -563,95 +513,87 @@ JOIN (
     UNION ALL
     SELECT 'Padre Burgos' AS district_name, 'Tangkaan ES' AS school_name
     UNION ALL
+    SELECT 'Pintuyan' AS district_name, 'Atuyan MGES' AS school_name
+    UNION ALL
+    SELECT 'Pintuyan' AS district_name, 'Ayahag ES' AS school_name
+    UNION ALL
+    SELECT 'Pintuyan' AS district_name, 'Bantawon MGES' AS school_name
+    UNION ALL
+    SELECT 'Pintuyan' AS district_name, 'Bolodbolod ES' AS school_name
+    UNION ALL
     SELECT 'Pintuyan' AS district_name, 'Buenavista ES' AS school_name
     UNION ALL
     SELECT 'Pintuyan' AS district_name, 'Bulawan PS' AS school_name
     UNION ALL
+    SELECT 'Pintuyan' AS district_name, 'Carnaga MGES' AS school_name
+    UNION ALL
     SELECT 'Pintuyan' AS district_name, 'Catbawan ES' AS school_name
+    UNION ALL
+    SELECT 'Pintuyan' AS district_name, 'Catmon IS' AS school_name
     UNION ALL
     SELECT 'Pintuyan' AS district_name, 'Cogon ES' AS school_name
     UNION ALL
     SELECT 'Pintuyan' AS district_name, 'Dan-an ES' AS school_name
     UNION ALL
+    SELECT 'Pintuyan' AS district_name, 'Himbangan ES' AS school_name
+    UNION ALL
+    SELECT 'Pintuyan' AS district_name, 'Himbangan NHS' AS school_name
+    UNION ALL
+    SELECT 'Pintuyan' AS district_name, 'Himos-onan ES' AS school_name
+    UNION ALL
+    SELECT 'Pintuyan' AS district_name, 'Hindag-an ES' AS school_name
+    UNION ALL
+    SELECT 'Pintuyan' AS district_name, 'Libas MGES' AS school_name
+    UNION ALL
+    SELECT 'Pintuyan' AS district_name, 'Lipanto ES' AS school_name
+    UNION ALL
+    SELECT 'Pintuyan' AS district_name, 'Ma. Asuncion ES' AS school_name
+    UNION ALL
+    SELECT 'Pintuyan' AS district_name, 'Magbagacay ES' AS school_name
+    UNION ALL
+    SELECT 'Pintuyan' AS district_name, 'Mahayag ES' AS school_name
+    UNION ALL
+    SELECT 'Pintuyan' AS district_name, 'Mahika ES' AS school_name
+    UNION ALL
+    SELECT 'Pintuyan' AS district_name, 'Malinao MGES' AS school_name
+    UNION ALL
     SELECT 'Pintuyan' AS district_name, 'Manglit ES' AS school_name
+    UNION ALL
+    SELECT 'Pintuyan' AS district_name, 'New Guinsaugon ES' AS school_name
+    UNION ALL
+    SELECT 'Pintuyan' AS district_name, 'New Guinsaugon NHS' AS school_name
+    UNION ALL
+    SELECT 'Pintuyan' AS district_name, 'Nueva Esperanza ES' AS school_name
     UNION ALL
     SELECT 'Pintuyan' AS district_name, 'Nueva Estrella ES' AS school_name
     UNION ALL
-    SELECT 'Pintuyan' AS district_name, 'Pintuyan CS' AS school_name
+    SELECT 'Pintuyan' AS district_name, 'Panian ES' AS school_name
     UNION ALL
-    SELECT 'Pintuyan' AS district_name, 'Pintuyan National High School' AS school_name
+    SELECT 'Pintuyan' AS district_name, 'Pintuyan CS' AS school_name
     UNION ALL
     SELECT 'Pintuyan' AS district_name, 'Pintuyan NHS' AS school_name
     UNION ALL
-    SELECT 'Pintuyan' AS district_name, 'Pintuyan NVHS' AS school_name
-    UNION ALL
-    SELECT 'Pintuyan' AS district_name, 'Punod PS' AS school_name
-    UNION ALL
     SELECT 'Pintuyan' AS district_name, 'San Agustin ES' AS school_name
+    UNION ALL
+    SELECT 'Pintuyan' AS district_name, 'San Isidro ES' AS school_name
     UNION ALL
     SELECT 'Pintuyan' AS district_name, 'Son-ok ES' AS school_name
     UNION ALL
-    SELECT 'Saint Bernard' AS district_name, 'Atuyan MGES' AS school_name
+    SELECT 'Pintuyan' AS district_name, 'Sta.Cruz MGES' AS school_name
     UNION ALL
-    SELECT 'Saint Bernard' AS district_name, 'Ayahag ES' AS school_name
+    SELECT 'Pintuyan' AS district_name, 'Sug-Angon PS' AS school_name
     UNION ALL
-    SELECT 'Saint Bernard' AS district_name, 'Bantawon MGES' AS school_name
+    SELECT 'Pintuyan' AS district_name, 'Tabontabon ES' AS school_name
     UNION ALL
-    SELECT 'Saint Bernard' AS district_name, 'Bolodbolod ES' AS school_name
+    SELECT 'Pintuyan' AS district_name, 'Tambis I ES' AS school_name
     UNION ALL
-    SELECT 'Saint Bernard' AS district_name, 'Carnaga MGES' AS school_name
-    UNION ALL
-    SELECT 'Saint Bernard' AS district_name, 'Catmon IS' AS school_name
-    UNION ALL
-    SELECT 'Saint Bernard' AS district_name, 'Himbangan ES' AS school_name
-    UNION ALL
-    SELECT 'Saint Bernard' AS district_name, 'Himbangan NHS' AS school_name
-    UNION ALL
-    SELECT 'Saint Bernard' AS district_name, 'Himos-onan ES' AS school_name
-    UNION ALL
-    SELECT 'Saint Bernard' AS district_name, 'Hindag-an ES' AS school_name
-    UNION ALL
-    SELECT 'Saint Bernard' AS district_name, 'Libas MGES' AS school_name
-    UNION ALL
-    SELECT 'Saint Bernard' AS district_name, 'Lipanto ES' AS school_name
-    UNION ALL
-    SELECT 'Saint Bernard' AS district_name, 'Ma. Asuncion ES' AS school_name
-    UNION ALL
-    SELECT 'Saint Bernard' AS district_name, 'Magbagacay ES' AS school_name
-    UNION ALL
-    SELECT 'Saint Bernard' AS district_name, 'Mahayag ES' AS school_name
-    UNION ALL
-    SELECT 'Saint Bernard' AS district_name, 'Mahayahay ES' AS school_name
-    UNION ALL
-    SELECT 'Saint Bernard' AS district_name, 'Mahika ES' AS school_name
-    UNION ALL
-    SELECT 'Saint Bernard' AS district_name, 'Malinao MGES' AS school_name
-    UNION ALL
-    SELECT 'Saint Bernard' AS district_name, 'New Guinsaugon Elementary School' AS school_name
-    UNION ALL
-    SELECT 'Saint Bernard' AS district_name, 'New Guinsaugon ES' AS school_name
-    UNION ALL
-    SELECT 'Saint Bernard' AS district_name, 'New Guinsaugon NHS' AS school_name
-    UNION ALL
-    SELECT 'Saint Bernard' AS district_name, 'Nueva Esperanza ES' AS school_name
-    UNION ALL
-    SELECT 'Saint Bernard' AS district_name, 'Panian ES' AS school_name
+    SELECT 'Pintuyan' AS district_name, 'Tambis NHS' AS school_name
     UNION ALL
     SELECT 'Saint Bernard' AS district_name, 'Saint Bernard CS' AS school_name
     UNION ALL
-    SELECT 'Saint Bernard' AS district_name, 'San Isidro ES' AS school_name
-    UNION ALL
-    SELECT 'Saint Bernard' AS district_name, 'Sta.Cruz MGES' AS school_name
-    UNION ALL
-    SELECT 'Saint Bernard' AS district_name, 'Sug-Angon PS' AS school_name
-    UNION ALL
-    SELECT 'Saint Bernard' AS district_name, 'Tabontabon ES' AS school_name
-    UNION ALL
-    SELECT 'Saint Bernard' AS district_name, 'Tambis I ES' AS school_name
+    SELECT 'Saint Bernard' AS district_name, 'Mahayahay ES' AS school_name
     UNION ALL
     SELECT 'Saint Bernard' AS district_name, 'Tambis II MG ES' AS school_name
-    UNION ALL
-    SELECT 'Saint Bernard' AS district_name, 'Tambis NHS' AS school_name
     UNION ALL
     SELECT 'San Francisco' AS district_name, 'Anislagon PS' AS school_name
     UNION ALL
@@ -681,8 +623,6 @@ JOIN (
     UNION ALL
     SELECT 'San Francisco' AS district_name, 'Sta. Paz NHS' AS school_name
     UNION ALL
-    SELECT 'San Francisco' AS district_name, 'Sudmon Elementary School' AS school_name
-    UNION ALL
     SELECT 'San Francisco' AS district_name, 'Sudmon ES' AS school_name
     UNION ALL
     SELECT 'San Francisco' AS district_name, 'Tuno ES' AS school_name
@@ -699,11 +639,7 @@ JOIN (
     UNION ALL
     SELECT 'San Juan' AS district_name, 'Pong-oy ES' AS school_name
     UNION ALL
-    SELECT 'San Juan' AS district_name, 'San Juan Central Elementary with SPED Center' AS school_name
-    UNION ALL
     SELECT 'San Juan' AS district_name, 'San Juan ES w/ SPED' AS school_name
-    UNION ALL
-    SELECT 'San Juan' AS district_name, 'San Juan NHS' AS school_name
     UNION ALL
     SELECT 'San Juan' AS district_name, 'Somoje ES' AS school_name
     UNION ALL
@@ -717,10 +653,6 @@ JOIN (
     UNION ALL
     SELECT 'San Ricardo' AS district_name, 'Camang ES' AS school_name
     UNION ALL
-    SELECT 'San Ricardo' AS district_name, 'Esperanza ES' AS school_name
-    UNION ALL
-    SELECT 'San Ricardo' AS district_name, 'Esperanza National High School' AS school_name
-    UNION ALL
     SELECT 'San Ricardo' AS district_name, 'Esperanza NHS' AS school_name
     UNION ALL
     SELECT 'San Ricardo' AS district_name, 'Kinachawa ES' AS school_name
@@ -732,10 +664,6 @@ JOIN (
     SELECT 'San Ricardo' AS district_name, 'San Ramon ES' AS school_name
     UNION ALL
     SELECT 'San Ricardo' AS district_name, 'San Ricardo CS' AS school_name
-    UNION ALL
-    SELECT 'San Ricardo' AS district_name, 'San Ricardo NHS' AS school_name
-    UNION ALL
-    SELECT 'San Ricardo' AS district_name, 'Saub Integrated School' AS school_name
     UNION ALL
     SELECT 'San Ricardo' AS district_name, 'Saub IS' AS school_name
     UNION ALL
@@ -765,8 +693,6 @@ JOIN (
     UNION ALL
     SELECT 'Silago' AS district_name, 'Sap-ang ES' AS school_name
     UNION ALL
-    SELECT 'Silago' AS district_name, 'Silago Central School' AS school_name
-    UNION ALL
     SELECT 'Silago' AS district_name, 'Silago CS' AS school_name
     UNION ALL
     SELECT 'Silago' AS district_name, 'Silago NVHS' AS school_name
@@ -777,15 +703,23 @@ JOIN (
     UNION ALL
     SELECT 'Silago' AS district_name, 'Tubod ES' AS school_name
     UNION ALL
+    SELECT 'Sogod I' AS district_name, 'Buac ES' AS school_name
+    UNION ALL
     SELECT 'Sogod I' AS district_name, 'Cabadbaran PS' AS school_name
     UNION ALL
+    SELECT 'Sogod I' AS district_name, 'Concepcion ES' AS school_name
+    UNION ALL
+    SELECT 'Sogod I' AS district_name, 'Dagsa MGES' AS school_name
+    UNION ALL
     SELECT 'Sogod I' AS district_name, 'Hindangan PS' AS school_name
+    UNION ALL
+    SELECT 'Sogod I' AS district_name, 'Hipantag MGES' AS school_name
+    UNION ALL
+    SELECT 'Sogod I' AS district_name, 'Hipantag PS' AS school_name
     UNION ALL
     SELECT 'Sogod I' AS district_name, 'Kauswagan ES' AS school_name
     UNION ALL
     SELECT 'Sogod I' AS district_name, 'Libas ES' AS school_name
-    UNION ALL
-    SELECT 'Sogod I' AS district_name, 'Libas NHS' AS school_name
     UNION ALL
     SELECT 'Sogod I' AS district_name, 'Lum-an MGES' AS school_name
     UNION ALL
@@ -793,57 +727,33 @@ JOIN (
     UNION ALL
     SELECT 'Sogod I' AS district_name, 'Mabicay ES' AS school_name
     UNION ALL
+    SELECT 'Sogod I' AS district_name, 'Mac ES' AS school_name
+    UNION ALL
     SELECT 'Sogod I' AS district_name, 'Milagroso ES' AS school_name
+    UNION ALL
+    SELECT 'Sogod I' AS district_name, 'Pancho Villa ES' AS school_name
     UNION ALL
     SELECT 'Sogod I' AS district_name, 'Rizal PS' AS school_name
     UNION ALL
-    SELECT 'Sogod I' AS district_name, 'San Pedro Elementary School' AS school_name
+    SELECT 'Sogod I' AS district_name, 'San Isidro ES' AS school_name
     UNION ALL
     SELECT 'Sogod I' AS district_name, 'San Pedro ES' AS school_name
     UNION ALL
     SELECT 'Sogod I' AS district_name, 'Sogod CS w/ SPED Center' AS school_name
     UNION ALL
-    SELECT 'Sogod I' AS district_name, 'Sogod NHS' AS school_name
-    UNION ALL
     SELECT 'Sogod I' AS district_name, 'Sta. Maria PS' AS school_name
     UNION ALL
     SELECT 'Sogod II' AS district_name, 'Benit PS' AS school_name
-    UNION ALL
-    SELECT 'Sogod II' AS district_name, 'Buac ES' AS school_name
-    UNION ALL
-    SELECT 'Sogod II' AS district_name, 'Concepcion ES' AS school_name
-    UNION ALL
-    SELECT 'Sogod II' AS district_name, 'Consolacion Elementary School' AS school_name
     UNION ALL
     SELECT 'Sogod II' AS district_name, 'Consolacion ES' AS school_name
     UNION ALL
     SELECT 'Sogod II' AS district_name, 'Consolacion NHS' AS school_name
     UNION ALL
-    SELECT 'Sogod II' AS district_name, 'Dagsa MGES' AS school_name
-    UNION ALL
-    SELECT 'Sogod II' AS district_name, 'Hipantag MGES' AS school_name
-    UNION ALL
-    SELECT 'Sogod II' AS district_name, 'Hipantag PS' AS school_name
-    UNION ALL
-    SELECT 'Sogod II' AS district_name, 'Kahupian IS' AS school_name
-    UNION ALL
     SELECT 'Sogod II' AS district_name, 'Kanangkaan ES' AS school_name
-    UNION ALL
-    SELECT 'Sogod II' AS district_name, 'Mac ES' AS school_name
-    UNION ALL
-    SELECT 'Sogod II' AS district_name, 'Magatas ES' AS school_name
-    UNION ALL
-    SELECT 'Sogod II' AS district_name, 'Olisihan ES' AS school_name
-    UNION ALL
-    SELECT 'Sogod II' AS district_name, 'Pancho Villa ES' AS school_name
     UNION ALL
     SELECT 'Sogod II' AS district_name, 'Pandan-San Miguel ES' AS school_name
     UNION ALL
     SELECT 'Sogod II' AS district_name, 'San Francisco Mabuhay PS' AS school_name
-    UNION ALL
-    SELECT 'Sogod II' AS district_name, 'San Isidro ES' AS school_name
-    UNION ALL
-    SELECT 'Sogod II' AS district_name, 'San Isidro NHS' AS school_name
     UNION ALL
     SELECT 'Sogod II' AS district_name, 'San Juan ES' AS school_name
     UNION ALL
@@ -865,8 +775,6 @@ JOIN (
     UNION ALL
     SELECT 'Tomas Oppus' AS district_name, 'DAFENHS' AS school_name
     UNION ALL
-    SELECT 'Tomas Oppus' AS district_name, 'Hinagtican ES' AS school_name
-    UNION ALL
     SELECT 'Tomas Oppus' AS district_name, 'Hinapo ES' AS school_name
     UNION ALL
     SELECT 'Tomas Oppus' AS district_name, 'Hugpa ES' AS school_name
@@ -875,26 +783,13 @@ JOIN (
     UNION ALL
     SELECT 'Tomas Oppus' AS district_name, 'Mapgap ES' AS school_name
     UNION ALL
-    SELECT 'Tomas Oppus' AS district_name, 'Maslog ES' AS school_name
-    UNION ALL
     SELECT 'Tomas Oppus' AS district_name, 'Rizal ES' AS school_name
     UNION ALL
-    SELECT 'Tomas Oppus' AS district_name, 'Rizal NHS' AS school_name
-    UNION ALL
     SELECT 'Tomas Oppus' AS district_name, 'San Antonio ES' AS school_name
-    UNION ALL
-    SELECT 'Tomas Oppus' AS district_name, 'San Isidro ES' AS school_name
-    UNION ALL
-    SELECT 'Tomas Oppus' AS district_name, 'San Isidro NHS' AS school_name
-    UNION ALL
-    SELECT 'Tomas Oppus' AS district_name, 'Tinago ES' AS school_name
-    UNION ALL
-    SELECT 'Tomas Oppus' AS district_name, 'Tomas Oppus Central School' AS school_name
     UNION ALL
     SELECT 'Tomas Oppus' AS district_name, 'Tomas Oppus CS' AS school_name
 ) x ON x.district_name = d.name
 ON DUPLICATE KEY UPDATE name = VALUES(name);
-
 -- client types
 INSERT INTO client_types (code, label) VALUES
 ('division_office_personnel', 'Division Office Personnel'),
@@ -912,7 +807,7 @@ FROM (
     UNION ALL
     SELECT 'Allan M. Rosello' AS full_name, 'EPS' AS position_title, NULL AS district_name, 'MAPEH/Math' AS area, 'division_office_personnel' AS client_type_code
     UNION ALL
-    SELECT 'Andrew' AS full_name, 'Anduyo' AS position_title, NULL AS district_name, 'ADMINISTRATIVE SERVICES-PERSONNEL' AS area, 'division_office_personnel' AS client_type_code
+    SELECT 'Andrew Anduyo' AS full_name, NULL AS position_title, NULL AS district_name, 'ADMINISTRATIVE SERVICES-PERSONNEL' AS area, 'division_office_personnel' AS client_type_code
     UNION ALL
     SELECT 'Aprilyn V. Gaviola' AS full_name, 'PDO I' AS position_title, NULL AS district_name, 'Student Services' AS area, 'division_office_personnel' AS client_type_code
     UNION ALL
@@ -926,7 +821,7 @@ FROM (
     UNION ALL
     SELECT 'Dexter Tantoy' AS full_name, 'Secretary' AS position_title, NULL AS district_name, NULL AS area, 'division_office_personnel' AS client_type_code
     UNION ALL
-    SELECT 'Edril' AS full_name, 'Betonio ,' AS position_title, NULL AS district_name, NULL AS area, 'division_office_personnel' AS client_type_code
+    SELECT 'Edril Betonio' AS full_name, NULL AS position_title, NULL AS district_name, NULL AS area, 'division_office_personnel' AS client_type_code
     UNION ALL
     SELECT 'Eduardo E. Legantin' AS full_name, 'EPS' AS position_title, NULL AS district_name, 'LR' AS area, 'division_office_personnel' AS client_type_code
     UNION ALL
@@ -934,11 +829,13 @@ FROM (
     UNION ALL
     SELECT 'Emmanuel A. Gerardo' AS full_name, 'EPS' AS position_title, NULL AS district_name, 'Araling Panlipunan' AS area, 'division_office_personnel' AS client_type_code
     UNION ALL
-    SELECT 'Ethel' AS full_name, 'Acuna' AS position_title, NULL AS district_name, 'ADMINISTRATIVE SERVICES-RECORDS' AS area, 'division_office_personnel' AS client_type_code
+    SELECT 'Ethel Acuna' AS full_name, NULL AS position_title, NULL AS district_name, 'ADMINISTRATIVE SERVICES-RECORDS' AS area, 'division_office_personnel' AS client_type_code
     UNION ALL
     SELECT 'Evangelina B. Laroa' AS full_name, 'EPS' AS position_title, NULL AS district_name, 'Values' AS area, 'division_office_personnel' AS client_type_code
     UNION ALL
-    SELECT 'Farrah' AS full_name, 'Bandibas' AS position_title, NULL AS district_name, 'ADMINISTRATIVE SERVICES-PROPERTY & SUPPLY' AS area, 'division_office_personnel' AS client_type_code
+    SELECT 'Farrah Bandibas' AS full_name, NULL AS position_title, NULL AS district_name, 'ADMINISTRATIVE SERVICES-PROPERTY & SUPPLY' AS area, 'division_office_personnel' AS client_type_code
+    UNION ALL
+    SELECT 'Farrah Yepes' AS full_name, NULL AS position_title, NULL AS district_name, NULL AS area, 'division_office_personnel' AS client_type_code
     UNION ALL
     SELECT 'Glaiza Mea D. Rin' AS full_name, 'EPS-II' AS position_title, NULL AS district_name, 'SMM&E' AS area, 'division_office_personnel' AS client_type_code
     UNION ALL
@@ -952,17 +849,17 @@ FROM (
     UNION ALL
     SELECT 'Isidro Catubig' AS full_name, 'ASDS' AS position_title, NULL AS district_name, 'ASDS' AS area, 'division_office_personnel' AS client_type_code
     UNION ALL
-    SELECT 'Jenelyn' AS full_name, 'Inting' AS position_title, NULL AS district_name, NULL AS area, 'division_office_personnel' AS client_type_code
+    SELECT 'Jenelyn Inting' AS full_name, NULL AS position_title, NULL AS district_name, NULL AS area, 'division_office_personnel' AS client_type_code
     UNION ALL
-    SELECT 'Joan' AS full_name, 'Malasaga' AS position_title, NULL AS district_name, 'ADMINISTRATIVE SERVICES-CASH' AS area, 'division_office_personnel' AS client_type_code
+    SELECT 'Joan Malasaga' AS full_name, NULL AS position_title, NULL AS district_name, 'ADMINISTRATIVE SERVICES-CASH' AS area, 'division_office_personnel' AS client_type_code
     UNION ALL
-    SELECT 'Jonah' AS full_name, 'Balata' AS position_title, NULL AS district_name, NULL AS area, 'division_office_personnel' AS client_type_code
+    SELECT 'Jonah Balata' AS full_name, NULL AS position_title, NULL AS district_name, NULL AS area, 'division_office_personnel' AS client_type_code
     UNION ALL
     SELECT 'Jose Carmelo Gaviola' AS full_name, 'Dentist' AS position_title, NULL AS district_name, 'Medical Section' AS area, 'division_office_personnel' AS client_type_code
     UNION ALL
     SELECT 'Josilyn n Solana' AS full_name, 'SDS' AS position_title, NULL AS district_name, 'SDS' AS area, 'division_office_personnel' AS client_type_code
     UNION ALL
-    SELECT 'Judy' AS full_name, 'Sy' AS position_title, NULL AS district_name, NULL AS area, 'division_office_personnel' AS client_type_code
+    SELECT 'Judy Sy' AS full_name, NULL AS position_title, NULL AS district_name, NULL AS area, 'division_office_personnel' AS client_type_code
     UNION ALL
     SELECT 'Lloyd C. Carbonilla' AS full_name, 'EPS' AS position_title, NULL AS district_name, 'ALS' AS area, 'division_office_personnel' AS client_type_code
     UNION ALL
@@ -976,7 +873,7 @@ FROM (
     UNION ALL
     SELECT 'Marnuld F. Climaco' AS full_name, 'Teacher' AS position_title, NULL AS district_name, 'Saint Joseph College' AS area, 'division_office_personnel' AS client_type_code
     UNION ALL
-    SELECT 'Mary Edaline' AS full_name, 'Perez' AS position_title, NULL AS district_name, NULL AS area, 'division_office_personnel' AS client_type_code
+    SELECT 'Mary Edaline Perez' AS full_name, NULL AS position_title, NULL AS district_name, NULL AS area, 'division_office_personnel' AS client_type_code
     UNION ALL
     SELECT 'Railan Saavedra' AS full_name, 'COS' AS position_title, NULL AS district_name, 'DRRM' AS area, 'division_office_personnel' AS client_type_code
     UNION ALL
@@ -994,7 +891,7 @@ FROM (
     UNION ALL
     SELECT 'Victor D. Dumaguit' AS full_name, 'EPS' AS position_title, NULL AS district_name, 'TLE' AS area, 'division_office_personnel' AS client_type_code
     UNION ALL
-    SELECT 'Yden Earl' AS full_name, 'Billiones' AS position_title, NULL AS district_name, NULL AS area, 'division_office_personnel' AS client_type_code
+    SELECT 'Yden Earl Billiones' AS full_name, NULL AS position_title, NULL AS district_name, NULL AS area, 'division_office_personnel' AS client_type_code
     UNION ALL
     SELECT 'Zedrick G. Malbas' AS full_name, 'SEPS' AS position_title, NULL AS district_name, 'SMM&E' AS area, 'division_office_personnel' AS client_type_code
     UNION ALL

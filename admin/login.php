@@ -53,11 +53,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap');
 
         :root {
-            --bg: #f2f5f9;
+            --bg: #f3f6fb;
             --card: #ffffff;
             --ink: #0f172a;
             --muted: #64748b;
-            --line: #dbe2ea;
+            --line: #e2e8f0;
             --accent: #0f766e;
             --accent-strong: #0b5f59;
             --danger-bg: #fee2e2;
@@ -73,61 +73,61 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         body {
             font-family: 'Manrope', system-ui, -apple-system, Segoe UI, sans-serif;
             background:
-                radial-gradient(900px 500px at 20% 12%, #dbeafe 0%, transparent 60%),
-                radial-gradient(700px 500px at 90% 0%, #ccfbf1 0%, transparent 58%),
-                #f2f5f9;
+                radial-gradient(900px 420px at 18% 0%, #dbeafe 0%, transparent 62%),
+                radial-gradient(760px 420px at 90% 0%, #ccfbf1 0%, transparent 58%),
+                #f3f6fb;
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 24px 16px;
+            padding: 18px 14px;
             color: #0f172a;
         }
 
         .login-container {
             background: #ffffff;
-            padding: 28px 24px 24px;
-            border-radius: 16px;
+            padding: 22px 18px 18px;
+            border-radius: 12px;
             border: 1px solid rgba(15, 23, 42, 0.08);
-            box-shadow: 0 16px 45px rgba(15, 23, 42, 0.12);
+            box-shadow: 0 10px 28px rgba(15, 23, 42, 0.08);
             width: 100%;
-            max-width: 420px;
+            max-width: 390px;
         }
 
         .login-header {
             text-align: center;
-            margin-bottom: 22px;
+            margin-bottom: 16px;
         }
 
         .login-header h1 {
-            font-size: 24px;
+            font-size: 22px;
             letter-spacing: -0.3px;
-            margin-bottom: 4px;
+            margin-bottom: 2px;
         }
 
         .login-header p {
             color: #64748b;
-            font-size: 14px;
+            font-size: 12px;
         }
 
         .form-group {
-            margin-bottom: 14px;
+            margin-bottom: 10px;
         }
 
         label {
             display: block;
-            margin-bottom: 7px;
+            margin-bottom: 5px;
             font-weight: 600;
-            font-size: 13px;
+            font-size: 12px;
         }
 
         input[type='text'],
         input[type='password'] {
             width: 100%;
-            padding: 11px 12px;
-            border: 1px solid #dbe2ea;
-            border-radius: 8px;
-            font-size: 14px;
+            padding: 9px 10px;
+            border: 1px solid #e2e8f0;
+            border-radius: 7px;
+            font-size: 13px;
             color: #0f172a;
             transition: border-color 0.2s, box-shadow 0.2s;
             background: #fff;
@@ -143,22 +143,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         .error {
             background: #fee2e2;
             color: #991b1b;
-            padding: 10px 12px;
-            border-radius: 8px;
-            margin-bottom: 14px;
-            font-size: 13px;
+            padding: 8px 10px;
+            border-radius: 7px;
+            margin-bottom: 10px;
+            font-size: 12px;
             border: 1px solid rgba(220, 38, 38, 0.3);
         }
 
         .btn-login {
             width: 100%;
-            margin-top: 6px;
-            padding: 12px 14px;
+            margin-top: 2px;
+            padding: 10px 12px;
             background: #0f766e;
             color: white;
             border: none;
-            border-radius: 8px;
-            font-size: 14px;
+            border-radius: 7px;
+            font-size: 13px;
             font-weight: 600;
             cursor: pointer;
             transition: background 0.2s, transform 0.2s;
@@ -176,13 +176,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         .back-link {
             text-align: center;
-            margin-top: 16px;
+            margin-top: 12px;
         }
 
         .back-link a {
             color: #0f4b6d;
             text-decoration: none;
-            font-size: 13px;
+            font-size: 12px;
             font-weight: 600;
         }
 
@@ -192,11 +192,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         @media (max-width: 480px) {
             .login-container {
-                padding: 24px 18px 20px;
+                padding: 18px 14px 14px;
             }
 
             .login-header h1 {
-                font-size: 22px;
+                font-size: 20px;
             }
         }
     </style>
